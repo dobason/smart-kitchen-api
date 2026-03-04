@@ -1,0 +1,37 @@
+// ============================================
+// COOKBOOK MODEL
+// ============================================
+
+model Cookbook {
+  cookbookId Int      @id @default(autoincrement()) @map("cookbook_id")
+  userId     String   @map("user_id")
+  name       String   @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user            User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  cookbookRecipes CookbookRecipe[]
+
+  @@index([userId])
+  @@map("cookbooks")
+}
+
+// ============================================
+// COOKBOOK_RECIPE (Junction Table)
+// ============================================
+
+model CookbookRecipe {
+  recipeId   Int      @map("recipe_id")
+  cookbookId Int      @map("cookbook_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  recipe   Recipe   @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  cookbook Cookbook @relation(fields: [cookbookId], references: [cookbookId], onDelete: Cascade)
+
+  @@id([recipeId, cookbookId])
+  @@index([cookbookId])
+  @@map("cookbook_recipes")
+}

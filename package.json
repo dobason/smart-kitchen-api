@@ -1,15 +1,37 @@
 {
   "name": "smart-kitchen-api",
-  "version": "1.0.50",
+  "version": "1.0.0",
+  "description": "Recipe API built with ElysiaJS and Prisma ORM",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist --target bun",
+    "db:generate": "bunx prisma generate",
+    "db:push": "bunx prisma db push",
+    "db:migrate": "bunx prisma migrate dev",
+    "db:migrate:prod": "bunx prisma migrate deploy",
+    "db:seed": "bunx prisma db seed",
+    "db:studio": "bunx prisma studio",
+    "db:reset": "bunx prisma migrate reset",
+    "postinstall": "bunx prisma generate"
   },
   "dependencies": {
-    "elysia": "latest"
+    "elysia": "^1.1.0",
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/swagger": "^1.1.0",
+    "elysia-clerk": "latest",
+    "@prisma/client": "^5.12.0"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "typescript": "^5.4.0",
+    "prisma": "^5.12.0",
+    "@types/node": "^20.11.0"
   },
-  "module": "src/index.js"
+  "prisma": {
+    "schema": "./prisma/schema",
+    "seed": "bun run prisma/seed.ts"
+  },
+  "module": "src/index.ts",
+  "type": "module"
 }

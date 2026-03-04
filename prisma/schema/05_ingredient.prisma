@@ -1,0 +1,36 @@
+// ============================================
+// INGREDIENT MODEL
+// ============================================
+
+model Ingredient {
+  ingredientId Int      @id @default(autoincrement()) @map("ingredient_id")
+  name         String   @db.VarChar(255)
+  icon         String?  @db.VarChar(512)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  recipeIngredients RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+// ============================================
+// RECIPE_INGREDIENT (Junction Table)
+// ============================================
+
+model RecipeIngredient {
+  recipeId     Int     @map("recipe_id")
+  ingredientId Int     @map("ingredient_id")
+  quantity     Float?
+  unit         String? @db.VarChar(255)
+  note         String? @db.VarChar(255)
+
+  // Relations
+  recipe     Recipe     @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [ingredientId], onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
+  @@index([ingredientId])
+  @@map("recipe_ingredients")
+}

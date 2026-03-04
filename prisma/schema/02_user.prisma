@@ -1,0 +1,17 @@
+// ============================================
+// USER MODEL
+// ============================================
+
+model User {
+  userId    String   @id @map("user_id") // Clerk user ID (e.g. "user_xxx")
+  username  String   @db.VarChar(255)
+  avatarUrl String?  @map("avartar_url") @db.VarChar(1024)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  recipes   Recipe[]
+  cookbooks Cookbook[]
+
+  @@map("users")
+}

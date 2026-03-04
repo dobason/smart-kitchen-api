@@ -1,0 +1,33 @@
+// ============================================
+// TAG MODEL
+// ============================================
+
+model Tag {
+  tagId     Int      @id @default(autoincrement()) @map("tag_id")
+  name      String   @db.VarChar(255)
+  category  String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  recipeTags RecipeTag[]
+
+  @@map("tags")
+}
+
+// ============================================
+// RECIPE_TAG (Junction Table)
+// ============================================
+
+model RecipeTag {
+  recipeId Int @map("recipe_id")
+  tagId    Int @map("tag_id")
+
+  // Relations
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [tagId], onDelete: Cascade)
+
+  @@id([recipeId, tagId])
+  @@index([tagId])
+  @@map("recipe_tags")
+}

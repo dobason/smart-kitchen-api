@@ -1,0 +1,23 @@
+// ============================================
+// PRISMA CONFIGURATION
+// ============================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum SourceType {
+  image
+  video
+  text
+}

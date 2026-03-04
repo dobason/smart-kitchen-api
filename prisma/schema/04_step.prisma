@@ -1,0 +1,20 @@
+// ============================================
+// STEP MODEL
+// ============================================
+
+model Step {
+  stepId      Int      @id @default(autoincrement()) @map("step_id")
+  recipeId    Int      @map("recipe_id")
+  stepNumber  Int      @map("step_number")
+  instruction String   @db.Text
+  tip         String?  @db.Text
+  time        Int?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@map("steps")
+}

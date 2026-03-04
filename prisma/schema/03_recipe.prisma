@@ -1,0 +1,30 @@
+// ============================================
+// RECIPE MODEL
+// ============================================
+
+model Recipe {
+  recipeId       Int        @id @default(autoincrement()) @map("recipe_id")
+  userId         String     @map("user_id")
+  recipesName    String     @map("recipes_name") @db.VarChar(255)
+  description    String?    @db.Text
+  imageRecipe    String?    @map("image_recipe") @db.VarChar(1024)
+  totalTime      Int?       @map("total_time")
+  calories       Float?
+  protein        Float?
+  carbs          Float?
+  fats           Float?
+  sourceType     SourceType @default(text) @map("source_type")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  numberOfServes Int?       @map("number_of_serves")
+
+  // Relations
+  user              User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  steps             Step[]
+  recipeIngredients RecipeIngredient[]
+  recipeTags        RecipeTag[]
+  cookbookRecipes   CookbookRecipe[]
+
+  @@index([userId])
+  @@map("recipes")
+}
