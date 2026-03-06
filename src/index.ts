@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { swagger } from "@elysiajs/swagger";
-import { cookbookRoutes } from "./routes/cookbook";
+import { cookbookRoutes } from "./routes/cookbook/cookbook.routes";
 
 const app = new Elysia()
   .use(swagger({

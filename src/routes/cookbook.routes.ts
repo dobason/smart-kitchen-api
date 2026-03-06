@@ -5,7 +5,7 @@ import {
     createCookbook,
     updateCookbook,
     deleteCookbook,
-} from "./handler";
+} from "../services/cookbook.services";
 
 export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
 
