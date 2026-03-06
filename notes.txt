@@ -1,0 +1,37 @@
+# Smart Kitchen API - Project Notes
+
+## Overview
+- API for smart kitchen management system
+
+## Features
+- [ ] User authentication
+- [ ] Recipe management
+- [ ] Ingredient inventory
+- [ ] Cooking timer/notifications
+- [ ] API documentation
+
+## Tech Stack
+- Framework: [Node.js/Python/etc]
+- Database: [MongoDB/PostgreSQL/etc]
+- Authentication: JWT/OAuth2
+
+## Setup Instructions
+1. Clone repository
+2. Install dependencies
+3. Configure environment variables
+4. Run migrations
+5. Start server
+
+## Key Files
+- `/src/` - Source code
+- `/tests/` - Test files
+- `/docs/` - Documentation
+
+## TODO
+- [ ] Complete core API endpoints
+- [ ] Add unit tests
+- [ ] Write API documentation
+- [ ] Set up CI/CD pipeline
+
+## Notes
+- Add your notes here as project progresses
