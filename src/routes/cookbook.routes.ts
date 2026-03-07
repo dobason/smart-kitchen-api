@@ -42,7 +42,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     // 3. Tạo mới (POST)
     .post("/", async ({ body, set }) => {
         try {
-            const data = body as { name: string };
+            // TODO: Replace data.userId with authenticated user's ID once auth middleware is implemented
+            const data = body as { name: string; userId: number };
 
             // Validate name is not empty after trimming
             if (!data.name?.trim()) {
@@ -50,7 +51,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
                 return { success: false, message: "Tên công thức không được để trống" };
             }
 
-            const newCookbook = await createCookbook({ name: data.name, userId: 1 });
+            const newCookbook = await createCookbook({ name: data.name, userId: data.userId });
             set.status = 201;
             return { success: true, message: "Tạo thành công", data: newCookbook };
         } catch (error) {
@@ -60,7 +61,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         }
     }, {
         body: t.Object({
-            name: t.String({ error: "Tên công thức không được để trống" }),
+            name: t.String(),
+            userId: t.Number()
         })
     })
 
