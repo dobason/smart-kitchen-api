@@ -1,15 +1,24 @@
 import { Elysia } from "elysia";
+
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { testConnection } from "./lib/prisma";
 import {
+  userPublicRoutes,
+  recipePublicRoutes,
+  ingredientPublicRoutes,
+  tagPublicRoutes,
+} from "./routes/public";
+import {
   authRoutes,
-  userRoutes,
-  recipeRoutes,
-  ingredientRoutes,
-  tagRoutes,
   cookbookRoutes,
-} from "./routes";
+  userPrivateRoutes,
+  recipePrivateRoutes,
+  ingredientPrivateRoutes,
+  tagPrivateRoutes,
+} from "./routes/private";
+
+const API_VERSION = "v1" as const;
 
 const app = new Elysia()
   // CORS
@@ -26,20 +35,19 @@ const app = new Elysia()
       path: "/docs",
       documentation: {
         info: {
-          title: "Recipe API",
+          title: "Smart Kitchen API",
           version: "1.0.0",
-          description: "Recipe Management API built with ElysiaJS and Prisma",
+          description: "Smart Kitchen API built with ElysiaJS + Prisma + PostgreSQL",
+        },
+        externalDocs: {
+          description: "Login with Clerk to get your {{ YOUR_SECRET_TOKEN }}",
+          url: "/login-with-clerk"
         },
         tags: [
-          { name: "Auth", description: "Authentication endpoints" },
-          { name: "Users", description: "User management" },
-          { name: "Recipes", description: "Recipe CRUD operations" },
-          { name: "Recipe Steps", description: "Manage recipe steps" },
-          { name: "Recipe Ingredients", description: "Manage recipe ingredients" },
-          { name: "Recipe Tags", description: "Manage recipe tags" },
-          { name: "Ingredients", description: "Ingredient management" },
-          { name: "Tags", description: "Tag management" },
-          { name: "Cookbooks", description: "Cookbook management" },
+          // Public endpoints
+          { name: 'Public', description: 'Public endpoints' },
+          // Private endpoints (requires Bearer token)
+          { name: 'Private', description: 'Private endpoints (requires YOUR_SECRET_TOKEN)' },
         ],
         components: {
           securitySchemes: {
@@ -53,21 +61,53 @@ const app = new Elysia()
       },
     })
   )
+  // Playground — Clerk-authenticated API explorer
+  .get("/login-with-clerk", async () => {
+    const pk = (process.env.CLERK_PUBLISHABLE_KEY ?? "").trim();
+    // Derive the Frontend API URL from the publishable key
+    // pk format: pk_test_<base64(fapi_host + "$")>
+    const fapiHost = Buffer.from(pk.split("_")[2] ?? "", "base64")
+      .toString("utf8")
+      .replace(/\$$/, "");
+    let html = await Bun.file(`${import.meta.dir}/../public/playground.html`).text();
+    html = html.replaceAll("__CLERK_PUBLISHABLE_KEY__", pk);
+    html = html.replaceAll("__CLERK_FAPI__", fapiHost);
+    return new Response(html, {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }, { detail: { hide: true } })
   // Health check
+  .get("/", () => ({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    service: "smart-kitchen-api",
+  }), {
+    detail: { hide: true },
+  })
   .get("/health", () => ({
     status: "ok",
     timestamp: new Date().toISOString(),
-    service: "recipe-api",
-  }))
-  // API Routes
-  .group("/api/v1", (app) =>
+    service: "smart-kitchen-api",
+  }), {
+    detail: { hide: true },
+  })
+  // Public routes
+  .group(`/${API_VERSION}`, (app) =>
+    app
+      .use(userPublicRoutes)
+      .use(recipePublicRoutes)
+      .use(ingredientPublicRoutes)
+      .use(tagPublicRoutes)
+  )
+  // Private routes (require auth)
+  .group(`/${API_VERSION}/private`, (app) =>
     app
       .use(authRoutes)
-      .use(userRoutes)
-      .use(recipeRoutes)
-      .use(ingredientRoutes)
-      .use(tagRoutes)
       .use(cookbookRoutes)
+      .use(userPrivateRoutes)
+      .use(recipePrivateRoutes)
+      .use(ingredientPrivateRoutes)
+      .use(tagPrivateRoutes)
   )
   // Global error handler
   .onError(({ code, error, set }) => {
@@ -107,10 +147,11 @@ async function bootstrap() {
 ║                                                           ║
 ║   🍳 Recipe API - ElysiaJS + Prisma                       ║
 ║                                                           ║
-║   Server:  http://${app.server?.hostname}:${app.server?.port}                       ║
-║   Docs:    http://${app.server?.hostname}:${app.server?.port}/docs                  ║
-║   Health:  http://${app.server?.hostname}:${app.server?.port}/health                ║
-║   Studio:  Run 'bun run db:studio'                        ║
+║   Server:     http://${app.server?.hostname}:${app.server?.port}                    ║
+║   Docs:       http://${app.server?.hostname}:${app.server?.port}/docs               ║
+║   Playground: http://${app.server?.hostname}:${app.server?.port}/login-with-clerk         ║
+║   Health:     http://${app.server?.hostname}:${app.server?.port}/health             ║
+║   Studio:     Run 'bun run db:studio'                     ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
   `);

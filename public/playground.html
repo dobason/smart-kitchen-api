@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Playground</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script
+      async
+      crossorigin="anonymous"
+      data-clerk-publishable-key="__CLERK_PUBLISHABLE_KEY__"
+      src="https://__CLERK_FAPI__/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+      type="text/javascript"
+    ></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --bg: #f9f9f8;
+        --surface: #ffffff;
+        --border: #e5e5e3;
+        --ink: #1a1a1a;
+        --muted: #7a7a78;
+        --accent: #d97706;
+        --accent-dim: #fef3c7;
+        --green: #16a34a;
+        --red: #dc2626;
+        --radius: 10px;
+        --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      }
+
+      body {
+        font-family: var(--sans);
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+      }
+
+      #root { min-height: 100vh; }
+
+      /* Clerk modal overrides */
+      .cl-rootBox { z-index: 9999; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      const { useState, useEffect, useCallback } = React;
+      const API = window.location.origin;
+
+      // ─── Clerk setup ────────────────────────────────────────────────────
+      let clerkInstance = null;
+
+      async function initClerk() {
+        // Per Clerk docs: the CDN script (loaded with data-clerk-publishable-key)
+        // auto-instantiates window.Clerk. We wait for it, then call .load().
+        await new Promise((resolve, reject) => {
+          if (window.Clerk) return resolve();
+          const el = document.querySelector('script[data-clerk-publishable-key]');
+          if (!el) return reject(new Error('Clerk script tag not found'));
+          el.addEventListener('load', resolve);
+          el.addEventListener('error', () => reject(new Error('Clerk script failed to load')));
+        });
+        await window.Clerk.load();
+        clerkInstance = window.Clerk;
+        return window.Clerk;
+      }
+
+      // ─── API calls ──────────────────────────────────────────────────────
+      async function apiFetch(path, method = 'GET') {
+        const token = await clerkInstance.session.getToken();
+        const t0 = Date.now();
+        const res = await fetch(`${API}${path}`, {
+          method,
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const ms = Date.now() - t0;
+        const data = await res.json();
+        return { ok: res.ok, status: res.status, data, ms };
+      }
+
+      // ─── styles ──────────────────────────────────────────────────────────
+      const c = {
+        page: {
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
+          background: 'var(--bg)',
+        },
+        card: {
+          width: '100%',
+          maxWidth: 580,
+          background: 'var(--surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 16,
+          overflow: 'hidden',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04)',
+        },
+        cardHead: {
+          padding: '1.75rem 2rem',
+          borderBottom: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+        },
+        cardBody: {
+          padding: '1.75rem 2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.25rem',
+        },
+        title: { fontSize: '1.1rem', fontWeight: 600, letterSpacing: '-0.01em' },
+        endpoint: {
+          fontFamily: 'var(--mono)',
+          fontSize: '0.72rem',
+          color: 'var(--accent)',
+          background: 'var(--accent-dim)',
+          padding: '2px 8px',
+          borderRadius: 5,
+          border: '1px solid rgba(217,119,6,0.2)',
+        },
+        userRow: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '0.875rem',
+          background: 'var(--bg)',
+          borderRadius: 'var(--radius)',
+          border: '1px solid var(--border)',
+        },
+        avatar: {
+          width: 36, height: 36, borderRadius: '50%',
+          border: '1.5px solid var(--border)', flexShrink: 0, objectFit: 'cover',
+        },
+        avatarFallback: {
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'var(--accent)', color: '#fff', fontWeight: 700,
+          fontSize: '0.875rem', display: 'grid', placeItems: 'center', flexShrink: 0,
+        },
+        userName: { fontSize: '0.9rem', fontWeight: 600 },
+        userEmail: { fontSize: '0.78rem', color: 'var(--muted)' },
+        userId: {
+          marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: '0.65rem',
+          color: 'var(--muted)', maxWidth: 160, overflow: 'hidden',
+          textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right',
+        },
+        divider: { borderTop: '1px solid var(--border)' },
+        row: {
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 10, flexWrap: 'wrap',
+        },
+        statusPill: (color) => ({
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          fontFamily: 'var(--mono)', fontSize: '0.72rem', color,
+          background: `${color}14`, border: `1px solid ${color}30`,
+          borderRadius: 20, padding: '3px 10px',
+        }),
+        dot: (color) => ({
+          width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0,
+        }),
+        actions: { display: 'flex', gap: 8 },
+        btn: {
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          padding: '0.5rem 1rem', borderRadius: 8, fontFamily: 'var(--sans)',
+          fontWeight: 500, fontSize: '0.85rem', cursor: 'pointer',
+          border: 'none', transition: 'opacity 0.1s',
+        },
+        btnPrimary: { background: 'var(--ink)', color: '#fff' },
+        btnGhost: {
+          background: 'transparent', color: 'var(--muted)',
+          border: '1px solid var(--border)',
+        },
+        btnDanger: {
+          background: 'transparent', color: 'var(--red)',
+          border: '1px solid rgba(220,38,38,0.2)',
+        },
+        pre: {
+          background: 'var(--bg)', border: '1px solid var(--border)',
+          borderRadius: 'var(--radius)', padding: '1rem',
+          fontFamily: 'var(--mono)', fontSize: '0.75rem', lineHeight: 1.7,
+          overflowX: 'auto', overflowY: 'auto', maxHeight: 280,
+          color: 'var(--ink)', whiteSpace: 'pre',
+        },
+        errorBox: {
+          background: '#fff5f5', border: '1px solid rgba(220,38,38,0.2)',
+          borderRadius: 'var(--radius)', padding: '1rem',
+          fontFamily: 'var(--mono)', fontSize: '0.75rem',
+          color: 'var(--red)', lineHeight: 1.6,
+        },
+        label: {
+          fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.06em',
+          textTransform: 'uppercase', color: 'var(--muted)',
+        },
+        tokenBox: {
+          background: 'var(--bg)', border: '1px solid var(--border)',
+          borderRadius: 'var(--radius)', padding: '0.875rem',
+          fontFamily: 'var(--mono)', fontSize: '0.68rem',
+          color: 'var(--muted)', wordBreak: 'break-all', lineHeight: 1.6,
+        },
+        signInWrap: {
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          gap: '1.5rem', padding: '3rem 2rem', textAlign: 'center',
+        },
+        logo: {
+          width: 48, height: 48, borderRadius: 12, background: 'var(--ink)',
+          display: 'grid', placeItems: 'center', fontSize: '1.5rem',
+        },
+        signInTitle: { fontSize: '1.3rem', fontWeight: 700, letterSpacing: '-0.02em' },
+        signInSub: { fontSize: '0.875rem', color: 'var(--muted)', lineHeight: 1.6 },
+      };
+
+      // ─── App ─────────────────────────────────────────────────────────────
+      function App({ clerk }) {
+        const [user, setUser] = useState(clerk.user);
+        const [meState, setMeState] = useState({ status: 'idle' });
+        const [syncState, setSyncState] = useState({ status: 'idle' });
+        const [token, setToken] = useState(null);
+        const [copied, setCopied] = useState(false);
+
+        useEffect(() => {
+          return clerk.addListener(({ user }) => setUser(user));
+        }, []);
+
+        const fetchMe = useCallback(async () => {
+          setMeState({ status: 'loading' });
+          try {
+            const { ok, status, data, ms } = await apiFetch('/v1/private/auth/me');
+            if (ok) setMeState({ status: 'success', data, ms });
+            else setMeState({ status: 'error', code: status, message: JSON.stringify(data, null, 2) });
+          } catch (e) {
+            setMeState({ status: 'error', message: e.message });
+          }
+        }, []);
+
+        const syncMe = useCallback(async () => {
+          setSyncState({ status: 'loading' });
+          try {
+            const { ok, status, data, ms } = await apiFetch('/v1/private/auth/sync', 'POST');
+            if (ok) setSyncState({ status: 'success', data, ms });
+            else setSyncState({ status: 'error', code: status, message: JSON.stringify(data, null, 2) });
+          } catch (e) {
+            setSyncState({ status: 'error', message: e.message });
+          }
+        }, []);
+
+        const revealToken = useCallback(async () => {
+          const t = await clerk.session.getToken();
+          setToken(t);
+        }, []);
+
+        const reset = () => {
+          setMeState({ status: 'idle' });
+          setSyncState({ status: 'idle' });
+        };
+
+        const statusColor =
+          meState.status === 'success' ? 'var(--green)'
+          : meState.status === 'error' ? 'var(--red)'
+          : meState.status === 'loading' ? '#ca8a04'
+          : 'var(--muted)';
+
+        const statusLabel =
+          meState.status === 'success' ? `200 OK · ${meState.ms}ms`
+          : meState.status === 'error' && meState.code ? `${meState.code} Error`
+          : meState.status;
+
+        if (!user) {
+          return (
+            <div style={c.page}>
+              <div style={c.card}>
+                <div style={c.signInWrap}>
+                  <div style={c.logo}>🔐</div>
+                  <div>
+                    <h1 style={c.signInTitle}>Sign in to continue</h1>
+                    <p style={{ ...c.signInSub, marginTop: 8 }}>
+                      Authenticate with Clerk to call{' '}
+                      <code style={{ fontFamily: 'var(--mono)', fontSize: '0.85em' }}>
+                        {API}/v1/private/auth/me
+                      </code>
+                    </p>
+                  </div>
+                  <button
+                    style={{ ...c.btn, ...c.btnPrimary }}
+                    onClick={() => clerk.openSignIn()}
+                  >
+                    Sign in →
+                  </button>
+                  <a
+                    href="/docs"
+                    style={{ ...c.btn, ...c.btnGhost }}
+                  >
+                    Back to Docs 
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div style={c.page}>
+            <div style={c.card}>
+              {/* header */}
+              <div style={c.cardHead}>
+                <div>
+                  <div style={c.title}>API Playground</div>
+                  <div style={{ marginTop: 4 }}>
+                    <span style={c.endpoint}>GET {API}/v1/private/auth/me</span>
+                  </div>
+                </div>
+                <button
+                  style={{ ...c.btn, ...c.btnDanger, fontSize: '0.78rem' }}
+                  onClick={() => clerk.signOut({ redirectUrl: '/login-with-clerk' })}
+                >
+                  Sign out
+                </button>
+              </div>
+
+              <div style={c.cardBody}>
+                {/* user row */}
+                <div style={c.userRow}>
+                  {user.imageUrl ? (
+                    <img src={user.imageUrl} alt="" style={c.avatar} />
+                  ) : (
+                    <div style={c.avatarFallback}>{(user.firstName?.[0] ?? '?')}</div>
+                  )}
+                  <div>
+                    <div style={c.userName}>{user.fullName}</div>
+                    <div style={c.userEmail}>{user.primaryEmailAddress?.emailAddress}</div>
+                  </div>
+                  <div style={c.userId} title={user.id}>{user.id}</div>
+                </div>
+
+                <div style={c.divider} />
+
+                {/* controls */}
+                <div style={c.row}>
+                  <span style={c.statusPill(statusColor)}>
+                    <span style={c.dot(statusColor)} />
+                    {statusLabel}
+                  </span>
+                  <div style={c.actions}>
+                    {(meState.status !== 'idle' || syncState.status !== 'idle') && (
+                      <button onClick={reset} style={{ ...c.btn, ...c.btnGhost }}>Reset</button>
+                    )}
+                    <button
+                      onClick={fetchMe}
+                      disabled={meState.status === 'loading'}
+                      style={{ ...c.btn, ...c.btnPrimary, opacity: meState.status === 'loading' ? 0.55 : 1 }}
+                    >
+                      {meState.status === 'loading' ? 'Fetching…' : 'Fetch Me'}
+                    </button>
+                    <button
+                      onClick={syncMe}
+                      disabled={syncState.status === 'loading'}
+                      style={{ ...c.btn, ...c.btnPrimary, opacity: syncState.status === 'loading' ? 0.55 : 1 }}
+                    >
+                      {syncState.status === 'loading' ? 'Syncing…' : 'Sync Me'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* responses */}
+                {meState.status === 'success' && (
+                  <pre style={c.pre}>{JSON.stringify(meState.data, null, 2)}</pre>
+                )}
+                {meState.status === 'error' && (
+                  <div style={c.errorBox}>{meState.message}</div>
+                )}
+                {syncState.status === 'success' && (
+                  <pre style={c.pre}>{JSON.stringify(syncState.data, null, 2)}</pre>
+                )}
+                {syncState.status === 'error' && (
+                  <div style={c.errorBox}>{syncState.message}</div>
+                )}
+
+                <div style={c.divider} />
+
+                {/* token inspector */}
+                <div>
+                  <div style={{ ...c.row, marginBottom: 10 }}>
+                    <span style={c.label}>Bearer token</span>
+                    <div style={c.actions}>
+                      <button
+                        onClick={revealToken}
+                        style={{ ...c.btn, ...c.btnGhost, fontSize: '0.75rem', padding: '3px 10px' }}
+                      >
+                        {token ? 'Refresh' : 'Reveal'}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const t = token ?? await clerk.session.getToken();
+                          if (!token) setToken(t);
+                          await navigator.clipboard.writeText(t);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        style={{ ...c.btn, ...c.btnGhost, fontSize: '0.75rem', padding: '3px 10px',
+                          color: copied ? 'var(--green)' : undefined,
+                          borderColor: copied ? 'var(--green)' : undefined,
+                        }}
+                      >
+                        {copied ? 'Copied!' : 'Copy'}
+                      </button>
+                    </div>
+                  </div>
+                  {token && <div style={c.tokenBox}>{token.slice(0, 140)}…</div>}
+                </div>
+                
+                <div style={c.divider} />
+
+                <a
+                  href="/docs"
+                  style={{ ...c.btn, ...c.btnGhost, width: '100%', justifyContent: 'center', textDecoration: 'none', fontSize: '0.85rem' }}
+                >
+                  Back to Docs →
+                </a>
+
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ─── Boot ─────────────────────────────────────────────────────────────
+      (async () => {
+        try {
+          const clerk = await initClerk();
+          ReactDOM.createRoot(document.getElementById('root')).render(
+            React.createElement(App, { clerk })
+          );
+        } catch (e) {
+          document.getElementById('root').innerHTML =
+            `<div style="padding:2rem;font-family:monospace;color:#dc2626;background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;margin:2rem">
+              <strong>Failed to initialize Clerk:</strong><br/>${e.message}
+            </div>`;
+        }
+      })();
+    </script>
+  </body>
+</html>
