@@ -1,14 +1,14 @@
 import { Elysia } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { tagService } from "../../services/tag.service";
-import { tagSchema, idParamSchema } from "../../types";
+import { tagSchema, idParamSchema, HttpStatus } from "../../types";
 
 export const tagPrivateRoutes = new Elysia({ prefix: "/tags" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, set }) => {
     const { userId } = auth();
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -18,7 +18,7 @@ export const tagPrivateRoutes = new Elysia({ prefix: "/tags" })
   })
   .post("/", async ({ body, set }) => {
     const tag = await tagService.create(body);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: tag };
   }, {
     body: tagSchema.create,
@@ -27,7 +27,7 @@ export const tagPrivateRoutes = new Elysia({ prefix: "/tags" })
   .put("/:id", async ({ params, body, set }) => {
     const tag = await tagService.findById(params.id);
     if (!tag) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Tag not found" };
     }
     const updated = await tagService.update(params.id, body);
@@ -40,7 +40,7 @@ export const tagPrivateRoutes = new Elysia({ prefix: "/tags" })
   .delete("/:id", async ({ params, set }) => {
     const tag = await tagService.findById(params.id);
     if (!tag) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Tag not found" };
     }
     await tagService.delete(params.id);

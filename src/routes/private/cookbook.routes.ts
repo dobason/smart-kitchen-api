@@ -1,14 +1,14 @@
 import { Elysia, t } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { cookbookService } from "../../services/cookbook.service";
-import { cookbookSchema, idParamSchema } from "../../types";
+import { cookbookSchema, idParamSchema, HttpStatus } from "../../types";
 
 export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, set }) => {
     const { userId } = auth();
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -25,11 +25,11 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .get("/:id", async ({ params, userId, set }) => {
     const cookbook = await cookbookService.findById(params.id);
     if (!cookbook) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Cookbook not found" };
     }
     if (cookbook.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     return { success: true, data: cookbook };
@@ -39,7 +39,7 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   })
   .post("/", async ({ body, userId, set }) => {
     const cookbook = await cookbookService.create(userId, body.name);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: cookbook };
   }, {
     body: cookbookSchema.create,
@@ -48,11 +48,11 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .put("/:id", async ({ params, body, userId, set }) => {
     const cookbook = await cookbookService.findById(params.id);
     if (!cookbook) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Cookbook not found" };
     }
     if (cookbook.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const updated = await cookbookService.update(params.id, body.name!);
@@ -65,11 +65,11 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .delete("/:id", async ({ params, userId, set }) => {
     const cookbook = await cookbookService.findById(params.id);
     if (!cookbook) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Cookbook not found" };
     }
     if (cookbook.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await cookbookService.delete(params.id);
@@ -81,20 +81,20 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .post("/:id/recipes", async ({ params, body, userId, set }) => {
     const cookbook = await cookbookService.findById(params.id);
     if (!cookbook) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Cookbook not found" };
     }
     if (cookbook.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const exists = await cookbookService.hasRecipe(params.id, body.recipeId);
     if (exists) {
-      set.status = 400;
+      set.status = HttpStatus.BAD_REQUEST;
       return { success: false, error: "Recipe already in cookbook" };
     }
     const result = await cookbookService.addRecipe(params.id, body.recipeId);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: result };
   }, {
     params: idParamSchema,
@@ -104,11 +104,11 @@ export const cookbookRoutes = new Elysia({ prefix: "/cookbooks" })
   .delete("/:id/recipes/:recipeId", async ({ params, userId, set }) => {
     const cookbook = await cookbookService.findById(params.id);
     if (!cookbook) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Cookbook not found" };
     }
     if (cookbook.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await cookbookService.removeRecipe(params.id, params.recipeId);

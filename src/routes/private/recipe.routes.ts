@@ -1,14 +1,14 @@
 import { Elysia, t } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { recipeService } from "../../services/recipe.service";
-import { recipeSchema, stepSchema, recipeIngredientSchema, idParamSchema } from "../../types";
+import { recipeSchema, stepSchema, recipeIngredientSchema, idParamSchema, HttpStatus } from "../../types";
 
 export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, set }) => {
     const { userId } = auth();
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -18,7 +18,7 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   })
   .post("/", async ({ body, userId, set }) => {
     const recipe = await recipeService.create({ userId, ...body });
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: recipe };
   }, {
     body: recipeSchema.create,
@@ -27,11 +27,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .put("/:id", async ({ params, body, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const updated = await recipeService.update(params.id, body);
@@ -44,11 +44,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .delete("/:id", async ({ params, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await recipeService.delete(params.id);
@@ -61,15 +61,15 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .post("/:id/steps", async ({ params, body, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const step = await recipeService.addStep(params.id, body);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: step };
   }, {
     params: idParamSchema,
@@ -79,11 +79,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .put("/:id/steps/:stepId", async ({ params, body, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const step = await recipeService.updateStep(params.stepId, body);
@@ -96,11 +96,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .delete("/:id/steps/:stepId", async ({ params, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await recipeService.deleteStep(params.stepId);
@@ -113,15 +113,15 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .post("/:id/ingredients", async ({ params, body, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const ingredient = await recipeService.addIngredient(params.id, body);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: ingredient };
   }, {
     params: idParamSchema,
@@ -131,11 +131,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .put("/:id/ingredients/:ingredientId", async ({ params, body, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const ingredient = await recipeService.updateRecipeIngredient(params.id, params.ingredientId, body);
@@ -148,11 +148,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .delete("/:id/ingredients/:ingredientId", async ({ params, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await recipeService.removeIngredient(params.id, params.ingredientId);
@@ -165,15 +165,15 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .post("/:id/tags/:tagId", async ({ params, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const tag = await recipeService.addTag(params.id, params.tagId);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: tag };
   }, {
     params: t.Object({ id: t.Numeric(), tagId: t.Numeric() }),
@@ -182,11 +182,11 @@ export const recipePrivateRoutes = new Elysia({ prefix: "/recipes" })
   .delete("/:id/tags/:tagId", async ({ params, userId, set }) => {
     const recipe = await recipeService.findById(params.id);
     if (!recipe) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Recipe not found" };
     }
     if (recipe.userId !== userId) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await recipeService.removeTag(params.id, params.tagId);

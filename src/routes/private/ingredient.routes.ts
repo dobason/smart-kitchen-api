@@ -1,14 +1,14 @@
 import { Elysia } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { ingredientService } from "../../services/ingredient.service";
-import { ingredientSchema, idParamSchema } from "../../types";
+import { ingredientSchema, idParamSchema, HttpStatus } from "../../types";
 
 export const ingredientPrivateRoutes = new Elysia({ prefix: "/ingredients" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, set }) => {
     const { userId } = auth();
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -18,7 +18,7 @@ export const ingredientPrivateRoutes = new Elysia({ prefix: "/ingredients" })
   })
   .post("/", async ({ body, set }) => {
     const ingredient = await ingredientService.create(body);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: ingredient };
   }, {
     body: ingredientSchema.create,
@@ -27,7 +27,7 @@ export const ingredientPrivateRoutes = new Elysia({ prefix: "/ingredients" })
   .put("/:id", async ({ params, body, set }) => {
     const ingredient = await ingredientService.findById(params.id);
     if (!ingredient) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Ingredient not found" };
     }
     const updated = await ingredientService.update(params.id, body);
@@ -40,7 +40,7 @@ export const ingredientPrivateRoutes = new Elysia({ prefix: "/ingredients" })
   .delete("/:id", async ({ params, set }) => {
     const ingredient = await ingredientService.findById(params.id);
     if (!ingredient) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Ingredient not found" };
     }
     await ingredientService.delete(params.id);

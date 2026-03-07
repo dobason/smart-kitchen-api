@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { tagService } from "../../services/tag.service";
 import { recipeService } from "../../services/recipe.service";
-import { idParamSchema, paginationSchema } from "../../types";
+import { idParamSchema, paginationSchema, HttpStatus } from "../../types";
 
 export const tagPublicRoutes = new Elysia({ prefix: "/tags" })
   .get("/", async ({ query }) => {
@@ -26,7 +26,7 @@ export const tagPublicRoutes = new Elysia({ prefix: "/tags" })
   .get("/:id", async ({ params, set }) => {
     const tag = await tagService.findById(params.id);
     if (!tag) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Tag not found" };
     }
     return { success: true, data: tag };
@@ -37,7 +37,7 @@ export const tagPublicRoutes = new Elysia({ prefix: "/tags" })
   .get("/:id/recipes", async ({ params, query, set }) => {
     const tag = await tagService.findById(params.id);
     if (!tag) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "Tag not found" };
     }
     const { page = 1, limit = 10 } = query;

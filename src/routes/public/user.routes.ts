@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { userService } from "../../services/user.service";
 import { recipeService } from "../../services/recipe.service";
-import { paginationSchema } from "../../types";
+import { paginationSchema, HttpStatus } from "../../types";
 
 export const userPublicRoutes = new Elysia({ prefix: "/users" })
   .get("/", async () => {
@@ -13,7 +13,7 @@ export const userPublicRoutes = new Elysia({ prefix: "/users" })
   .get("/:id", async ({ params, set }) => {
     const user = await userService.getUserWithRecipes(params.id);
     if (!user) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "User not found" };
     }
     return { success: true, data: user };
@@ -24,7 +24,7 @@ export const userPublicRoutes = new Elysia({ prefix: "/users" })
   .get("/:id/recipes", async ({ params, query, set }) => {
     const user = await userService.findById(params.id);
     if (!user) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "User not found" };
     }
     const { page = 1, limit = 10 } = query;

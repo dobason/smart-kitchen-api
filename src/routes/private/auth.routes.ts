@@ -1,13 +1,14 @@
 import { Elysia } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { userService } from "../../services/user.service";
+import { HttpStatus } from "../../types";
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, clerk, set }) => {
     const { userId } = auth()
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -18,7 +19,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
   // Sync Clerk user into local DB on first sign-in
   .post("/sync", async ({ userId, set }) => {
     const user = await userService.upsert(userId!);
-    set.status = 201;
+    set.status = HttpStatus.CREATED;
     return { success: true, data: user };
   }, {
     detail: { tags: ["Private"], summary: "Sync Clerk user into local DB", security: [{ bearerAuth: [] }] },
@@ -26,7 +27,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
   .get("/me", async ({ userId, set }) => {
     const userData = await userService.getUserWithRecipes(userId!);
     if (!userData) {
-      set.status = 404;
+      set.status = HttpStatus.NOT_FOUND;
       return { success: false, error: "User profile not found. Call POST /auth/sync first." };
     }
     return { success: true, data: userData };

@@ -1,14 +1,14 @@
 import { Elysia, t } from "elysia";
 import { clerkPlugin } from "elysia-clerk";
 import { userService } from "../../services/user.service";
-import { userSchema } from "../../types";
+import { userSchema, HttpStatus } from "../../types";
 
 export const userPrivateRoutes = new Elysia({ prefix: "/users" })
   .use(clerkPlugin())
   .onBeforeHandle(({ auth, set }) => {
     const { userId } = auth();
     if (!userId) {
-      set.status = 401;
+      set.status = HttpStatus.UNAUTHORIZED;
       return { success: false, error: "Unauthenticated" };
     }
   })
@@ -18,7 +18,7 @@ export const userPrivateRoutes = new Elysia({ prefix: "/users" })
   })
   .put("/:id", async ({ params, body, userId, set }) => {
     if (userId !== params.id) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     const updated = await userService.update(params.id, body);
@@ -30,7 +30,7 @@ export const userPrivateRoutes = new Elysia({ prefix: "/users" })
   })
   .delete("/:id", async ({ params, userId, set }) => {
     if (userId !== params.id) {
-      set.status = 403;
+      set.status = HttpStatus.FORBIDDEN;
       return { success: false, error: "Forbidden" };
     }
     await userService.delete(params.id);
