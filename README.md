@@ -72,3 +72,22 @@ Prisma giúp thao tác với PostgreSQL an toàn và chặt chẽ hơn qua TypeS
    bun run dev
   ```
 Server ElysiaJS sẽ được khởi động và sẵn sàng xử lý các request từ ứng dụng React Native!
+
+## Test nhanh API
+
+- Swagger: mở `http://localhost:3000/swagger` sau khi chạy server.
+- Postman collection: import file [postman/smart-kitchen-api.postman_collection.json](postman/smart-kitchen-api.postman_collection.json).
+- Các endpoint list đã hỗ trợ filter theo khóa ngoại bằng query string.
+
+Ví dụ filter nhanh:
+
+- `GET /v1/cookbooks?userId=1`
+- `GET /v1/recipes?userId=1`
+- `GET /v1/recipes?sourceType=MANUAL`
+- `GET /v1/steps?recipeId=1`
+- `GET /v1/cookbook-recipes?cookbookId=1`
+- `GET /v1/cookbook-recipes?recipeId=1`
+- `GET /v1/recipe-tags?recipeId=1`
+- `GET /v1/recipe-tags?tagId=1`
+- `GET /v1/recipe-ingredients?recipeId=1`
+- `GET /v1/recipe-ingredients?ingredientId=1`

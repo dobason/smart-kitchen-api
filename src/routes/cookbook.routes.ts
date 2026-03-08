@@ -10,15 +10,19 @@ import {
 export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
 
     // 1. Lấy tất cả (GET)
-    .get("/", async ({ set }) => {
+    .get("/", async ({ query, set }) => {
         try {
-            const cookbooks = await getAllCookbooks();
+            const cookbooks = await getAllCookbooks({ userId: query.userId });
             return { success: true, data: cookbooks };
         } catch (error) {
             console.error("Lỗi khi lấy danh sách cookbooks:", error);
             set.status = 500;
             return { success: false, message: "Lỗi khi lấy danh sách" };
         }
+    }, {
+        query: t.Object({
+            userId: t.Optional(t.Numeric()),
+        })
     })
 
     // 2. Lấy chi tiết (GET)
