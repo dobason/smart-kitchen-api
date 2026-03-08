@@ -42,14 +42,16 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     // 3. Tạo mới (POST)
     .post("/", async ({ body, set }) => {
         try {
+            // TODO: Replace data.userId with authenticated user's ID once auth middleware is implemented
             const data = body as { name: string; userId: number };
 
+            // Validate name is not empty after trimming
             if (!data.name?.trim()) {
                 set.status = 400;
                 return { success: false, message: "Tên công thức không được để trống" };
             }
 
-            const newCookbook = await createCookbook({ name: data.name.trim(), userId: data.userId });
+            const newCookbook = await createCookbook({ name: data.name, userId: data.userId });
             set.status = 201;
             return { success: true, message: "Tạo thành công", data: newCookbook };
         } catch (error) {
@@ -69,15 +71,16 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         try {
             const data = body as { name?: string };
 
-            if (!data.name?.trim()) {
+            // Validate at least one updatable field is provided
+            if (!data.name) {
                 set.status = 400;
-                return { success: false, message: "Tên công thức không được để trống" };
+                return { success: false, message: "No fields to update" };
             }
 
-            const updatedCookbook = await updateCookbook(id, { name: data.name.trim() });
+            const updatedCookbook = await updateCookbook(id, data);
             return { success: true, message: "Cập nhật thành công", data: updatedCookbook };
         } catch (error: any) {
-            if (error?.code === "P2025") {
+            if (error?.code === 'P2025') {
                 set.status = 404;
                 return { success: false, message: "Không tìm thấy công thức để cập nhật" };
             }
@@ -98,7 +101,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
             await deleteCookbook(id);
             return { success: true, message: "Đã xóa công thức" };
         } catch (error: any) {
-            if (error?.code === "P2025") {
+            if (error?.code === 'P2025') {
                 set.status = 404;
                 return { success: false, message: "Không tìm thấy công thức để xóa" };
             }

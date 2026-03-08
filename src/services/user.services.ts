@@ -1,15 +1,6 @@
-import prisma from "../db";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg"
 
-export const getAllUsers = async () => {
-	return await prisma.user.findMany({
-		orderBy: { createdAt: "desc" },
-		select: {
-			id: true,
-			email: true,
-			username: true,
-			avartarUrl: true,
-			createdAt: true,
-			updatedAt: true,
-		},
-	});
-};
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });

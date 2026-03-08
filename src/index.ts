@@ -1,7 +1,6 @@
 import { Elysia, t } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cookbookRoutes } from "./routes/cookbook.routes";
-import { userRoutes } from "./routes/user.routes";
 
 const port = Number(process.env.PORT) || 3000;
 
@@ -16,7 +15,6 @@ const app = new Elysia()
     }
   }))
   .use(cookbookRoutes)
-  .use(userRoutes)
   .listen(port);
 
 console.log(`🦊 SmartKitchen API đang chạy tại http://${app.server?.hostname}:${app.server?.port}`);
