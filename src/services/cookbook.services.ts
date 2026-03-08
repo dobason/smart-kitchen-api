@@ -30,9 +30,8 @@ export const updateCookbook = async (id: number, data: Prisma.CookbookUncheckedU
             data,
         });
     } catch (error) {
-        const prismaError = error as Prisma.PrismaClientKnownRequestError;
-        if (prismaError.code === "P2025") {
-            throw Object.assign(new Error("Cookbook not found"), { code: "P2025" });
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw Object.assign(new Error('Cookbook not found'), { code: 'P2025' });
         }
         throw error;
     }
@@ -45,9 +44,8 @@ export const deleteCookbook = async (id: number) => {
             where: { id },
         });
     } catch (error) {
-        const prismaError = error as Prisma.PrismaClientKnownRequestError;
-        if (prismaError.code === "P2025") {
-            throw Object.assign(new Error("Cookbook not found"), { code: "P2025" });
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw Object.assign(new Error('Cookbook not found'), { code: 'P2025' });
         }
         throw error;
     }

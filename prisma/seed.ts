@@ -1,4 +1,9 @@
-import prisma from '../src/db';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaPg({ connectionString });
+const prisma = new PrismaClient({ adapter });
 
 // ─── Users ──────────────────────────────────────────────
 const sampleUsers = [
@@ -320,19 +325,6 @@ const seed = async () => {
       update: ri,
       create: ri,
     });
-  }
-
-  for (const [table, column] of [
-    ['users', 'user_id'],
-    ['cookbooks', 'cookbook_id'],
-    ['recipes', 'recipe_id'],
-    ['steps', 'step_id'],
-    ['tags', 'tag_id'],
-    ['ingredients', 'ingredient_id'],
-  ]) {
-    await prisma.$executeRawUnsafe(
-      `SELECT setval(pg_get_serial_sequence('${table}', '${column}'), COALESCE((SELECT MAX(${column}) FROM ${table}), 0));`
-    );
   }
 
   console.log('✅ All data seeded successfully!');
