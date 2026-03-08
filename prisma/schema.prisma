@@ -64,6 +64,7 @@ model Cookbook {
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   cookbookRecipes CookbookRecipe[]
 
+  @@index([createdAt])
   @@map("cookbooks")
 }
 

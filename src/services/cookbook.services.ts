@@ -1,9 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const connectionString = process.env.DATABASE_URL!;
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+import { Prisma } from "@prisma/client";
+import prisma from "../db";
 
 // Hàm lấy tất cả công thức
 export const getAllCookbooks = async () => {
@@ -20,23 +16,39 @@ export const getCookbookById = async (id: number) => {
 };
 
 // Hàm tạo công thức mới
-export const createCookbook = async (data: { title: string; description?: string }) => {
+export const createCookbook = async (data: Prisma.CookbookUncheckedCreateInput) => {
     return await prisma.cookbook.create({
         data,
     });
 };
 
 // Hàm cập nhật công thức
-export const updateCookbook = async (id: number, data: { title?: string; description?: string }) => {
-    return await prisma.cookbook.update({
-        where: { id },
-        data,
-    });
+export const updateCookbook = async (id: number, data: Prisma.CookbookUncheckedUpdateInput) => {
+    try {
+        return await prisma.cookbook.update({
+            where: { id },
+            data,
+        });
+    } catch (error) {
+        const prismaError = error as Prisma.PrismaClientKnownRequestError;
+        if (prismaError.code === "P2025") {
+            throw Object.assign(new Error("Cookbook not found"), { code: "P2025" });
+        }
+        throw error;
+    }
 };
 
 // Hàm xóa công thức
 export const deleteCookbook = async (id: number) => {
-    return await prisma.cookbook.delete({
-        where: { id },
-    });
+    try {
+        return await prisma.cookbook.delete({
+            where: { id },
+        });
+    } catch (error) {
+        const prismaError = error as Prisma.PrismaClientKnownRequestError;
+        if (prismaError.code === "P2025") {
+            throw Object.assign(new Error("Cookbook not found"), { code: "P2025" });
+        }
+        throw error;
+    }
 };
