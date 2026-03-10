@@ -76,7 +76,6 @@ Server ElysiaJS sẽ được khởi động và sẵn sàng xử lý các reque
 ## Test nhanh API
 
 - Swagger: mở `http://localhost:3000/swagger` sau khi chạy server.
-- Postman collection: import file [postman/smart-kitchen-api.postman_collection.json](postman/smart-kitchen-api.postman_collection.json).
 - Các endpoint list đã hỗ trợ filter theo khóa ngoại bằng query string.
 
 Ví dụ filter nhanh:
