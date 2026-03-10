@@ -263,6 +263,7 @@ const seed = async () => {
       create: cookbook,
     });
   }
+  console.log('✅ RecipeIngredients');
 
   console.log('🏷️ Seeding tags...');
   for (const tag of sampleTags) {
