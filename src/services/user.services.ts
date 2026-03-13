@@ -3,7 +3,6 @@ import { rethrowIfNotFound } from "./service.helpers";
 
 export type CreateUserInput = {
     email: string;
-    passwordHash: string;
     username: string;
     avartarUrl?: string;
 };

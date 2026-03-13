@@ -45,14 +45,13 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         try {
             const data = body as {
                 email: string;
-                passwordHash: string;
                 username: string;
                 avartarUrl?: string;
             };
 
-            if (!data.email.trim() || !data.passwordHash.trim() || !data.username.trim()) {
+            if (!data.email.trim() || !data.username.trim()) {
                 set.status = 400;
-                return { success: false, message: "email, passwordHash và username là bắt buộc" };
+                return { success: false, message: "email và username là bắt buộc" };
             }
 
             const newUser = await createUser(data);
@@ -66,7 +65,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
     }, {
         body: t.Object({
             email: t.String(),
-            passwordHash: t.String(),
             username: t.String(),
             avartarUrl: t.Optional(t.String()),
         }),
@@ -77,7 +75,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         try {
             const data = body as {
                 email?: string;
-                passwordHash?: string;
                 username?: string;
                 avartarUrl?: string;
             };
@@ -85,11 +82,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             if (data.email !== undefined && !data.email.trim()) {
                 set.status = 400;
                 return { success: false, message: "Email không được để trống" };
-            }
-
-            if (data.passwordHash !== undefined && !data.passwordHash.trim()) {
-                set.status = 400;
-                return { success: false, message: "Password hash không được để trống" };
             }
 
             if (data.username !== undefined && !data.username.trim()) {
@@ -119,7 +111,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
             email: t.Optional(t.String()),
-            passwordHash: t.Optional(t.String()),
             username: t.Optional(t.String()),
             avartarUrl: t.Optional(t.String()),
         }),

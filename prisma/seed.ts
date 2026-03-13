@@ -7,9 +7,9 @@ const prisma = new PrismaClient({ adapter });
 
 // ─── Users ──────────────────────────────────────────────
 const sampleUsers = [
-  { id: 1, email: 'hoangminh@gmail.com', passwordHash: '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ12', username: 'hoangminh', avartarUrl: null },
-  { id: 2, email: 'thuylinh@gmail.com', passwordHash: '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ34', username: 'thuylinh', avartarUrl: 'https://i.pravatar.cc/150?u=thuylinh' },
-  { id: 3, email: 'ducbao@gmail.com', passwordHash: '$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ56', username: 'ducbao', avartarUrl: null },
+  { id: 1, email: 'hoangminh@gmail.com', username: 'hoangminh', avartarUrl: null },
+  { id: 2, email: 'thuylinh@gmail.com', username: 'thuylinh', avartarUrl: 'https://i.pravatar.cc/150?u=thuylinh' },
+  { id: 3, email: 'ducbao@gmail.com', username: 'ducbao', avartarUrl: null },
 ];
 
 // ─── Cookbooks ──────────────────────────────────────────
