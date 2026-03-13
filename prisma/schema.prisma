@@ -12,3 +12,141 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum SourceType {
+  MANUAL
+  IMPORTED
+  AI_GENERATED
+
+  @@map("source_type_enum")
+}
+
+model User {
+  id           Int        @id @default(autoincrement()) @map("user_id")
+  email        String     @unique
+  username     String
+  avartarUrl   String?    @map("avartar_url")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  cookbooks Cookbook[]
+  recipes   Recipe[]
+
+  @@map("users")
+}
+
+model Recipe {
+  id             Int              @id @default(autoincrement()) @map("recipe_id")
+  userId         Int              @map("user_id")
+  recipesName    String           @map("recipes_name")
+  description    String?          @db.Text
+  imageRecipe    String?          @map("image_recipe")
+  totalTime      Int?             @map("total_time")
+  calories       Float?
+  protein        Float?
+  carbs          Float?
+  fats           Float?
+  sourceType     SourceType?      @map("source_type")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  numberOfServes Int?             @map("number_of_serves")
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps             Step[]
+  cookbookRecipes   CookbookRecipe[]
+  recipeTags        RecipeTag[]
+  recipeIngredients RecipeIngredient[]
+
+  @@map("recipes")
+}
+
+model Cookbook {
+  id        Int      @id @default(autoincrement()) @map("cookbook_id")
+  userId    Int      @map("user_id")
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cookbookRecipes CookbookRecipe[]
+
+  @@index([createdAt])
+  @@map("cookbooks")
+}
+
+model CookbookRecipe {
+  recipeId   Int      @map("recipe_id")
+  cookbookId Int      @map("cookbook_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  cookbook  Cookbook  @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, cookbookId])
+  @@map("cookbook_recipes")
+}
+
+model Step {
+  id         Int      @id @default(autoincrement()) @map("step_id")
+  recipeId   Int      @map("recipe_id")
+  stepNumber Int      @map("step_number")
+  instruction String  @db.Text
+  tip        String?  @db.Text
+  time       Int?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("steps")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement()) @map("tag_id")
+  name      String
+  category  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  recipeTags RecipeTag[]
+
+  @@map("tags")
+}
+
+model RecipeTag {
+  recipeId Int @map("recipe_id")
+  tagId    Int @map("tag_id")
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, tagId])
+  @@map("recipe_tags")
+}
+
+model Ingredient {
+  id        Int      @id @default(autoincrement()) @map("ingredient_id")
+  name      String
+  icon      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  recipeIngredients RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  recipeId     Int     @map("recipe_id")
+  ingredientId Int     @map("ingredient_id")
+  quantity     Float?
+  unit         String?
+  note         String?
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
+  @@map("recipe_ingredients")
+}
