@@ -10,7 +10,7 @@ import { cookbookRecipeRoutes } from "./routes/cookbook-recipe.routes";
 import { recipeTagRoutes } from "./routes/recipe-tag.routes";
 import { recipeIngredientRoutes } from "./routes/recipe-ingredient.routes";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+const port = Number(process.env.PORT) || 3000;
 
 const app = new Elysia()
   .use(swagger({
