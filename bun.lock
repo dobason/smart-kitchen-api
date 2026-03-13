@@ -6,10 +6,13 @@
       "name": "smart-kitchen-api",
       "dependencies": {
         "@prisma/client": "^7.4.2",
-        "elysia": "latest",
+        "elysia": "^1.4.22",
+        "pg": "^8.20.0",
       },
       "devDependencies": {
-        "bun-types": "latest",
+        "@types/pg": "^8.18.0",
+        "bun-types": "^1.3.6",
+        "dotenv": "^17.3.1",
         "prisma": "^7.4.2",
       },
     },
