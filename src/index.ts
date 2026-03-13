@@ -1,6 +1,4 @@
 import { Elysia } from "elysia";
-<<<<<<< HEAD
-=======
 import { swagger } from "@elysiajs/swagger";
 import { cookbookRoutes } from "./routes/cookbook.routes";
 import { userRoutes } from "./routes/user.routes";
@@ -11,15 +9,9 @@ import { ingredientRoutes } from "./routes/ingredient.routes";
 import { cookbookRecipeRoutes } from "./routes/cookbook-recipe.routes";
 import { recipeTagRoutes } from "./routes/recipe-tag.routes";
 import { recipeIngredientRoutes } from "./routes/recipe-ingredient.routes";
->>>>>>> origin/feature/CRUD-entity-api
 
 const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
 
-<<<<<<< HEAD
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
-=======
 const app = new Elysia()
   .use(swagger({
     documentation: {
@@ -43,4 +35,3 @@ const app = new Elysia()
 
 console.log(`🦊 SmartKitchen API đang chạy tại http://${app.server?.hostname}:${app.server?.port}`);
 console.log(`📚 Trải nghiệm Test API tại http://${app.server?.hostname}:${app.server?.port}/swagger`);
->>>>>>> origin/feature/CRUD-entity-api
