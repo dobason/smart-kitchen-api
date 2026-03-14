@@ -244,8 +244,24 @@ const sampleRecipeIngredients = [
   { recipeId: 10, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
 ];
 
+// ─── Destroy function ───────────────────────────────────
+const destroy = async () => {
+  console.log('🗑️  Destroying all data...');
+  await prisma.recipeIngredient.deleteMany();
+  await prisma.recipeTag.deleteMany();
+  await prisma.cookbookRecipe.deleteMany();
+  await prisma.step.deleteMany();
+  await prisma.recipe.deleteMany();
+  await prisma.cookbook.deleteMany();
+  await prisma.ingredient.deleteMany();
+  await prisma.tag.deleteMany();
+  await prisma.user.deleteMany();
+  console.log('✅ All data destroyed.');
+};
+
 // ─── Seed function ──────────────────────────────────────
 const seed = async () => {
+  await destroy();
   console.log('🌱 Seeding users...');
   for (const user of sampleUsers) {
     await prisma.user.upsert({

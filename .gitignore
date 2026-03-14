@@ -45,3 +45,6 @@ package-lock.json
 **/*.bun
 /src/generated/prisma
 ts_error.txt
+
+# AI generated code
+.claude
