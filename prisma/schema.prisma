@@ -17,7 +17,6 @@ enum SourceType {
 model User {
   id           Int        @id @default(autoincrement()) @map("user_id")
   email        String     @unique
-  passwordHash String     @map("password_hash")
   username     String
   avartarUrl   String?    @map("avartar_url")
   createdAt    DateTime   @default(now()) @map("created_at")
