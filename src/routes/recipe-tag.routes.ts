@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { t as translate } from "../plugins/i18n";
 import {
     createRecipeTag,
     deleteRecipeTag,
@@ -7,10 +8,13 @@ import {
     updateRecipeTag,
 } from "../services/recipe-tag.services";
 
+const locale = (req: Request) =>
+    req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
+
 export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
 
     // 1. Lấy tất cả recipe tags (GET)
-    .get("/", async ({ query, set }) => {
+    .get("/", async ({ query, set, request }) => {
         try {
             const recipeTags = await getAllRecipeTags({
                 recipeId: query.recipeId,
@@ -18,9 +22,8 @@ export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             });
             return { success: true, data: recipeTags };
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách recipe tags:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi lấy danh sách recipe tag" };
+            return { success: false, message: translate("errors.recipe_tag.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
@@ -30,19 +33,17 @@ export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
     })
 
     // 2. Lấy chi tiết recipe tag (GET)
-    .get("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, set }) => {
+    .get("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, set, request }) => {
         try {
             const recipeTag = await getRecipeTagById(recipeId, tagId);
             if (!recipeTag) {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe tag" };
+                return { success: false, message: translate("errors.recipe_tag.not_found", locale(request)) };
             }
-
             return { success: true, data: recipeTag };
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết recipe tag:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({
@@ -52,16 +53,15 @@ export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
     })
 
     // 3. Tạo mới recipe tag (POST)
-    .post("/", async ({ body, set }) => {
+    .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { recipeId: number; tagId: number };
             const newRecipeTag = await createRecipeTag(data);
             set.status = 201;
-            return { success: true, message: "Tạo thành công", data: newRecipeTag };
+            return { success: true, message: translate("success.created", locale(request)), data: newRecipeTag };
         } catch (error) {
-            console.error("Lỗi khi tạo recipe tag:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi tạo recipe tag" };
+            return { success: false, message: translate("errors.recipe_tag.create_failed", locale(request)) };
         }
     }, {
         body: t.Object({
@@ -71,27 +71,25 @@ export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
     })
 
     // 4. Cập nhật recipe tag (PUT)
-    .put("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, body, set }) => {
+    .put("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, body, set, request }) => {
         try {
             const data = body as { recipeId?: number; tagId?: number };
             const hasDataToUpdate = Object.values(data).some((value) => value !== undefined);
 
             if (!hasDataToUpdate) {
                 set.status = 400;
-                return { success: false, message: "No fields to update" };
+                return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
             const updatedRecipeTag = await updateRecipeTag(recipeId, tagId, data);
-            return { success: true, message: "Cập nhật thành công", data: updatedRecipeTag };
+            return { success: true, message: translate("success.updated", locale(request)), data: updatedRecipeTag };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe tag để cập nhật" };
+                return { success: false, message: translate("errors.recipe_tag.not_found_update", locale(request)) };
             }
-
-            console.error("Lỗi khi cập nhật recipe tag:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({
@@ -105,19 +103,17 @@ export const recipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
     })
 
     // 5. Xóa recipe tag (DELETE)
-    .delete("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, set }) => {
+    .delete("/:recipeId/:tagId", async ({ params: { recipeId, tagId }, set, request }) => {
         try {
             await deleteRecipeTag(recipeId, tagId);
-            return { success: true, message: "Đã xóa recipe tag" };
+            return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe tag để xóa" };
+                return { success: false, message: translate("errors.recipe_tag.not_found_delete", locale(request)) };
             }
-
-            console.error("Lỗi khi xóa recipe tag:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({

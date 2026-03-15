@@ -1,0 +1,82 @@
+{
+  "success": {
+    "created": "Created successfully",
+    "updated": "Updated successfully",
+    "deleted": "Deleted successfully"
+  },
+  "errors": {
+    "system": "Internal server error",
+    "no_fields_to_update": "No fields to update",
+    "user": {
+      "fetch": "Failed to fetch users",
+      "not_found": "User not found",
+      "not_found_update": "User not found for update",
+      "not_found_delete": "User not found for delete",
+      "required_fields": "email and username are required",
+      "email_required": "Email is required",
+      "username_required": "Username is required",
+      "create_failed": "Failed to create user"
+    },
+    "cookbook": {
+      "fetch": "Failed to fetch cookbooks",
+      "not_found": "Cookbook not found",
+      "not_found_update": "Cookbook not found for update",
+      "not_found_delete": "Cookbook not found for delete",
+      "name_required": "Cookbook name is required",
+      "create_failed": "Failed to create cookbook"
+    },
+    "recipe": {
+      "fetch": "Failed to fetch recipes",
+      "not_found": "Recipe not found",
+      "not_found_update": "Recipe not found for update",
+      "not_found_delete": "Recipe not found for delete",
+      "name_required": "Recipe name is required",
+      "create_failed": "Failed to create recipe"
+    },
+    "step": {
+      "fetch": "Failed to fetch steps",
+      "not_found": "Step not found",
+      "not_found_update": "Step not found for update",
+      "not_found_delete": "Step not found for delete",
+      "instruction_required": "Step instruction is required",
+      "create_failed": "Failed to create step"
+    },
+    "ingredient": {
+      "fetch": "Failed to fetch ingredients",
+      "not_found": "Ingredient not found",
+      "not_found_update": "Ingredient not found for update",
+      "not_found_delete": "Ingredient not found for delete",
+      "name_required": "Ingredient name is required",
+      "create_failed": "Failed to create ingredient"
+    },
+    "tag": {
+      "fetch": "Failed to fetch tags",
+      "not_found": "Tag not found",
+      "not_found_update": "Tag not found for update",
+      "not_found_delete": "Tag not found for delete",
+      "name_required": "Tag name is required",
+      "create_failed": "Failed to create tag"
+    },
+    "cookbook_recipe": {
+      "fetch": "Failed to fetch cookbook recipes",
+      "not_found": "Cookbook recipe not found",
+      "not_found_update": "Cookbook recipe not found for update",
+      "not_found_delete": "Cookbook recipe not found for delete",
+      "create_failed": "Failed to create cookbook recipe"
+    },
+    "recipe_tag": {
+      "fetch": "Failed to fetch recipe tags",
+      "not_found": "Recipe tag not found",
+      "not_found_update": "Recipe tag not found for update",
+      "not_found_delete": "Recipe tag not found for delete",
+      "create_failed": "Failed to create recipe tag"
+    },
+    "recipe_ingredient": {
+      "fetch": "Failed to fetch recipe ingredients",
+      "not_found": "Recipe ingredient not found",
+      "not_found_update": "Recipe ingredient not found for update",
+      "not_found_delete": "Recipe ingredient not found for delete",
+      "create_failed": "Failed to create recipe ingredient"
+    }
+  }
+}
