@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { t as translate } from "../plugins/i18n";
 import {
     getAllCookbooks,
     getCookbookById,
@@ -7,17 +8,19 @@ import {
     deleteCookbook,
 } from "../services/cookbook.services";
 
+const locale = (req: Request) =>
+    req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
+
 export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
 
     // 1. Lấy tất cả (GET)
-    .get("/", async ({ query, set }) => {
+    .get("/", async ({ query, set, request }) => {
         try {
             const cookbooks = await getAllCookbooks({ userId: query.userId });
             return { success: true, data: cookbooks };
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách cookbooks:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi lấy danh sách" };
+            return { success: false, message: translate("errors.cookbook.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
@@ -26,42 +29,38 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     })
 
     // 2. Lấy chi tiết (GET)
-    .get("/:id", async ({ params: { id }, set }) => {
+    .get("/:id", async ({ params: { id }, set, request }) => {
         try {
             const cookbook = await getCookbookById(id);
             if (!cookbook) {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy công thức" };
+                return { success: false, message: translate("errors.cookbook.not_found", locale(request)) };
             }
             return { success: true, data: cookbook };
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết cookbook:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() })
     })
 
     // 3. Tạo mới (POST)
-    .post("/", async ({ body, set }) => {
+    .post("/", async ({ body, set, request }) => {
         try {
-            // TODO: Replace data.userId with authenticated user's ID once auth middleware is implemented
             const data = body as { name: string; userId: number };
 
-            // Validate name is not empty after trimming
             if (!data.name?.trim()) {
                 set.status = 400;
-                return { success: false, message: "Tên công thức không được để trống" };
+                return { success: false, message: translate("errors.cookbook.name_required", locale(request)) };
             }
 
             const newCookbook = await createCookbook({ name: data.name, userId: data.userId });
             set.status = 201;
-            return { success: true, message: "Tạo thành công", data: newCookbook };
+            return { success: true, message: translate("success.created", locale(request)), data: newCookbook };
         } catch (error) {
-            console.error("Lỗi khi tạo cookbook:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi tạo" };
+            return { success: false, message: translate("errors.cookbook.create_failed", locale(request)) };
         }
     }, {
         body: t.Object({
@@ -71,26 +70,24 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     })
 
     // 4. Cập nhật (PUT)
-    .put("/:id", async ({ params: { id }, body, set }) => {
+    .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as { name?: string };
 
-            // Validate at least one updatable field is provided
             if (!data.name) {
                 set.status = 400;
-                return { success: false, message: "No fields to update" };
+                return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
             const updatedCookbook = await updateCookbook(id, data);
-            return { success: true, message: "Cập nhật thành công", data: updatedCookbook };
+            return { success: true, message: translate("success.updated", locale(request)), data: updatedCookbook };
         } catch (error: any) {
             if (error?.code === 'P2025') {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy công thức để cập nhật" };
+                return { success: false, message: translate("errors.cookbook.not_found_update", locale(request)) };
             }
-            console.error("Lỗi khi cập nhật cookbook:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
@@ -100,18 +97,17 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     })
 
     // 5. Xóa (DELETE)
-    .delete("/:id", async ({ params: { id }, set }) => {
+    .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteCookbook(id);
-            return { success: true, message: "Đã xóa công thức" };
+            return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === 'P2025') {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy công thức để xóa" };
+                return { success: false, message: translate("errors.cookbook.not_found_delete", locale(request)) };
             }
-            console.error("Lỗi khi xóa cookbook:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() })
