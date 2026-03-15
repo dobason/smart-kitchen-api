@@ -10,6 +10,7 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateRecipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredients" })
+    
     // Tạo mới recipe ingredient (POST)
     .post("/", async ({ body, set, request }) => {
         try {

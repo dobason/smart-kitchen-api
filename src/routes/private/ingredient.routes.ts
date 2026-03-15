@@ -1,15 +1,16 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../../plugins/i18n"; // Đã sửa thành ../../
+import { t as translate } from "../../plugins/i18n";
 import {
     createIngredient,
     deleteIngredient,
     updateIngredient,
-} from "../../services/ingredient.services"; // Đã sửa thành ../../
+} from "../../services/ingredient.services"; 
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
+    
     // Tạo mới ingredient (POST)
     .post("/", async ({ body, set, request }) => {
         try {
