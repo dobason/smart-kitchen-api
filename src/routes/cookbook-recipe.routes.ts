@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { t as translate } from "../plugins/i18n";
 import {
     createCookbookRecipe,
     deleteCookbookRecipe,
@@ -7,10 +8,13 @@ import {
     updateCookbookRecipe,
 } from "../services/cookbook-recipe.services";
 
+const locale = (req: Request) =>
+    req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
+
 export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" })
 
     // 1. Lấy tất cả cookbook recipes (GET)
-    .get("/", async ({ query, set }) => {
+    .get("/", async ({ query, set, request }) => {
         try {
             const cookbookRecipes = await getAllCookbookRecipes({
                 recipeId: query.recipeId,
@@ -18,9 +22,8 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             });
             return { success: true, data: cookbookRecipes };
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách cookbook recipes:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi lấy danh sách cookbook recipe" };
+            return { success: false, message: translate("errors.cookbook_recipe.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
@@ -30,19 +33,17 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // 2. Lấy chi tiết cookbook recipe (GET)
-    .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set }) => {
+    .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             const cookbookRecipe = await getCookbookRecipeById(recipeId, cookbookId);
             if (!cookbookRecipe) {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy cookbook recipe" };
+                return { success: false, message: translate("errors.cookbook_recipe.not_found", locale(request)) };
             }
-
             return { success: true, data: cookbookRecipe };
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết cookbook recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({
@@ -52,16 +53,15 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // 3. Tạo mới cookbook recipe (POST)
-    .post("/", async ({ body, set }) => {
+    .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { recipeId: number; cookbookId: number };
             const newCookbookRecipe = await createCookbookRecipe(data);
             set.status = 201;
-            return { success: true, message: "Tạo thành công", data: newCookbookRecipe };
+            return { success: true, message: translate("success.created", locale(request)), data: newCookbookRecipe };
         } catch (error) {
-            console.error("Lỗi khi tạo cookbook recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi tạo cookbook recipe" };
+            return { success: false, message: translate("errors.cookbook_recipe.create_failed", locale(request)) };
         }
     }, {
         body: t.Object({
@@ -71,27 +71,25 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // 4. Cập nhật cookbook recipe (PUT)
-    .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, set }) => {
+    .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, set, request }) => {
         try {
             const data = body as { recipeId?: number; cookbookId?: number };
             const hasDataToUpdate = Object.values(data).some((value) => value !== undefined);
 
             if (!hasDataToUpdate) {
                 set.status = 400;
-                return { success: false, message: "No fields to update" };
+                return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
             const updatedCookbookRecipe = await updateCookbookRecipe(recipeId, cookbookId, data);
-            return { success: true, message: "Cập nhật thành công", data: updatedCookbookRecipe };
+            return { success: true, message: translate("success.updated", locale(request)), data: updatedCookbookRecipe };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy cookbook recipe để cập nhật" };
+                return { success: false, message: translate("errors.cookbook_recipe.not_found_update", locale(request)) };
             }
-
-            console.error("Lỗi khi cập nhật cookbook recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({
@@ -105,19 +103,17 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // 5. Xóa cookbook recipe (DELETE)
-    .delete("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set }) => {
+    .delete("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             await deleteCookbookRecipe(recipeId, cookbookId);
-            return { success: true, message: "Đã xóa cookbook recipe" };
+            return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy cookbook recipe để xóa" };
+                return { success: false, message: translate("errors.cookbook_recipe.not_found_delete", locale(request)) };
             }
-
-            console.error("Lỗi khi xóa cookbook recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({

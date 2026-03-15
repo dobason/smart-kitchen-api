@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { t as translate } from "../plugins/i18n";
 import {
     createRecipe,
     deleteRecipe,
@@ -15,10 +16,13 @@ const sourceTypeSchema = t.Optional(
     ]),
 );
 
+const locale = (req: Request) =>
+    req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
+
 export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
 
     // 1. Lấy tất cả recipes (GET)
-    .get("/", async ({ query, set }) => {
+    .get("/", async ({ query, set, request }) => {
         try {
             const recipes = await getAllRecipes({
                 userId: query.userId,
@@ -26,9 +30,8 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
             });
             return { success: true, data: recipes };
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách recipes:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi lấy danh sách công thức" };
+            return { success: false, message: translate("errors.recipe.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
@@ -38,26 +41,24 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
     })
 
     // 2. Lấy chi tiết recipe (GET)
-    .get("/:id", async ({ params: { id }, set }) => {
+    .get("/:id", async ({ params: { id }, set, request }) => {
         try {
             const recipe = await getRecipeById(id);
             if (!recipe) {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe" };
+                return { success: false, message: translate("errors.recipe.not_found", locale(request)) };
             }
-
             return { success: true, data: recipe };
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
     })
 
     // 3. Tạo mới recipe (POST)
-    .post("/", async ({ body, set }) => {
+    .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
                 userId: number;
@@ -75,16 +76,15 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
 
             if (!data.recipesName.trim()) {
                 set.status = 400;
-                return { success: false, message: "Tên recipe không được để trống" };
+                return { success: false, message: translate("errors.recipe.name_required", locale(request)) };
             }
 
             const newRecipe = await createRecipe(data);
             set.status = 201;
-            return { success: true, message: "Tạo thành công", data: newRecipe };
+            return { success: true, message: translate("success.created", locale(request)), data: newRecipe };
         } catch (error) {
-            console.error("Lỗi khi tạo recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi tạo recipe" };
+            return { success: false, message: translate("errors.recipe.create_failed", locale(request)) };
         }
     }, {
         body: t.Object({
@@ -103,7 +103,7 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
     })
 
     // 4. Cập nhật recipe (PUT)
-    .put("/:id", async ({ params: { id }, body, set }) => {
+    .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
                 userId?: number;
@@ -121,26 +121,24 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
 
             if (data.recipesName !== undefined && !data.recipesName.trim()) {
                 set.status = 400;
-                return { success: false, message: "Tên recipe không được để trống" };
+                return { success: false, message: translate("errors.recipe.name_required", locale(request)) };
             }
 
             const hasDataToUpdate = Object.values(data).some((value) => value !== undefined);
             if (!hasDataToUpdate) {
                 set.status = 400;
-                return { success: false, message: "No fields to update" };
+                return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
             const updatedRecipe = await updateRecipe(id, data);
-            return { success: true, message: "Cập nhật thành công", data: updatedRecipe };
+            return { success: true, message: translate("success.updated", locale(request)), data: updatedRecipe };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe để cập nhật" };
+                return { success: false, message: translate("errors.recipe.not_found_update", locale(request)) };
             }
-
-            console.error("Lỗi khi cập nhật recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
@@ -160,19 +158,17 @@ export const recipeRoutes = new Elysia({ prefix: "v1/recipes" })
     })
 
     // 5. Xóa recipe (DELETE)
-    .delete("/:id", async ({ params: { id }, set }) => {
+    .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteRecipe(id);
-            return { success: true, message: "Đã xóa recipe" };
+            return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy recipe để xóa" };
+                return { success: false, message: translate("errors.recipe.not_found_delete", locale(request)) };
             }
-
-            console.error("Lỗi khi xóa recipe:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
