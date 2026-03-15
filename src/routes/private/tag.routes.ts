@@ -10,6 +10,7 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
+    
     // Tạo mới tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {

@@ -9,6 +9,7 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const publicIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
+    
     // Lấy tất cả ingredients (GET)
     .get("/", async ({ set, request }) => {
         try {
