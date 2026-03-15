@@ -1,12 +1,12 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
 import {
     getAllCookbooks,
     getCookbookById,
     createCookbook,
     updateCookbook,
     deleteCookbook,
-} from "../services/cookbook.services";
+} from "../../services/cookbook.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
