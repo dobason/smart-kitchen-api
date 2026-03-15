@@ -34,7 +34,10 @@ yarn-error.log*
 .env
 .pgdata/
 .pglite/
+<<<<<<< HEAD
 >>>>>>> origin/feature/CRUD-entity-api
+=======
+>>>>>>> 684f9408d82e0afec8b68afd1799831decfe9003
 
 # vercel
 .vercel
