@@ -29,9 +29,15 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+<<<<<<< HEAD
+=======
 .env
 .pgdata/
 .pglite/
+<<<<<<< HEAD
+>>>>>>> origin/feature/CRUD-entity-api
+=======
+>>>>>>> 684f9408d82e0afec8b68afd1799831decfe9003
 
 # vercel
 .vercel
@@ -44,7 +50,10 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 /src/generated/prisma
+<<<<<<< HEAD
+=======
 ts_error.txt
 
 # AI generated code
 .claude
+>>>>>>> 6238f58d4f1198f25894feacff642872035e9ad3

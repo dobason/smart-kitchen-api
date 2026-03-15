@@ -1,47 +1,17 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
 import {
     createTag,
     deleteTag,
-    getAllTags,
-    getTagById,
     updateTag,
-} from "../services/tag.services";
+} from "../../services/tag.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
-export const tagRoutes = new Elysia({ prefix: "v1/tags" })
-
-    // 1. Lấy tất cả tags (GET)
-    .get("/", async ({ set, request }) => {
-        try {
-            const tags = await getAllTags();
-            return { success: true, data: tags };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.tag.fetch", locale(request)) };
-        }
-    })
-
-    // 2. Lấy chi tiết tag (GET)
-    .get("/:id", async ({ params: { id }, set, request }) => {
-        try {
-            const tag = await getTagById(id);
-            if (!tag) {
-                set.status = 404;
-                return { success: false, message: translate("errors.tag.not_found", locale(request)) };
-            }
-            return { success: true, data: tag };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.system", locale(request)) };
-        }
-    }, {
-        params: t.Object({ id: t.Numeric() }),
-    })
-
-    // 3. Tạo mới tag (POST)
+export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
+    
+    // Tạo mới tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { name: string; category?: string };
@@ -60,12 +30,11 @@ export const tagRoutes = new Elysia({ prefix: "v1/tags" })
         }
     }, {
         body: t.Object({
-            name: t.String(),
-            category: t.Optional(t.String()),
+            name: t.String(), category: t.Optional(t.String()),
         }),
     })
 
-    // 4. Cập nhật tag (PUT)
+    // Cập nhật tag (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as { name?: string; category?: string };
@@ -94,12 +63,11 @@ export const tagRoutes = new Elysia({ prefix: "v1/tags" })
     }, {
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
-            name: t.Optional(t.String()),
-            category: t.Optional(t.String()),
+            name: t.Optional(t.String()), category: t.Optional(t.String()),
         }),
     })
 
-    // 5. Xóa tag (DELETE)
+    // Xóa tag (DELETE)
     .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteTag(id);
