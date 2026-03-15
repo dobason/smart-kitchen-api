@@ -10,6 +10,7 @@
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.4.2",
     "elysia": "latest",
+    "elysia-clerk": "^0.13.2",
     "pg": "^8.20.0"
   },
   "devDependencies": {
