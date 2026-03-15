@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { t as translate } from "../plugins/i18n";
 import {
     createStep,
     deleteStep,
@@ -7,17 +8,19 @@ import {
     updateStep,
 } from "../services/step.services";
 
+const locale = (req: Request) =>
+    req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
+
 export const stepRoutes = new Elysia({ prefix: "v1/steps" })
 
     // 1. Lấy tất cả steps (GET)
-    .get("/", async ({ query, set }) => {
+    .get("/", async ({ query, set, request }) => {
         try {
             const steps = await getAllSteps({ recipeId: query.recipeId });
             return { success: true, data: steps };
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách steps:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi lấy danh sách bước nấu" };
+            return { success: false, message: translate("errors.step.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
@@ -26,26 +29,24 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
     })
 
     // 2. Lấy chi tiết step (GET)
-    .get("/:id", async ({ params: { id }, set }) => {
+    .get("/:id", async ({ params: { id }, set, request }) => {
         try {
             const step = await getStepById(id);
             if (!step) {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy step" };
+                return { success: false, message: translate("errors.step.not_found", locale(request)) };
             }
-
             return { success: true, data: step };
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết step:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
     })
 
     // 3. Tạo mới step (POST)
-    .post("/", async ({ body, set }) => {
+    .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
                 recipeId: number;
@@ -57,16 +58,15 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
 
             if (!data.instruction.trim()) {
                 set.status = 400;
-                return { success: false, message: "Nội dung bước nấu không được để trống" };
+                return { success: false, message: translate("errors.step.instruction_required", locale(request)) };
             }
 
             const newStep = await createStep(data);
             set.status = 201;
-            return { success: true, message: "Tạo thành công", data: newStep };
+            return { success: true, message: translate("success.created", locale(request)), data: newStep };
         } catch (error) {
-            console.error("Lỗi khi tạo step:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi khi tạo step" };
+            return { success: false, message: translate("errors.step.create_failed", locale(request)) };
         }
     }, {
         body: t.Object({
@@ -79,7 +79,7 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
     })
 
     // 4. Cập nhật step (PUT)
-    .put("/:id", async ({ params: { id }, body, set }) => {
+    .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
                 recipeId?: number;
@@ -91,26 +91,24 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
 
             if (data.instruction !== undefined && !data.instruction.trim()) {
                 set.status = 400;
-                return { success: false, message: "Nội dung bước nấu không được để trống" };
+                return { success: false, message: translate("errors.step.instruction_required", locale(request)) };
             }
 
             const hasDataToUpdate = Object.values(data).some((value) => value !== undefined);
             if (!hasDataToUpdate) {
                 set.status = 400;
-                return { success: false, message: "No fields to update" };
+                return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
             const updatedStep = await updateStep(id, data);
-            return { success: true, message: "Cập nhật thành công", data: updatedStep };
+            return { success: true, message: translate("success.updated", locale(request)), data: updatedStep };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy step để cập nhật" };
+                return { success: false, message: translate("errors.step.not_found_update", locale(request)) };
             }
-
-            console.error("Lỗi khi cập nhật step:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
@@ -124,19 +122,17 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
     })
 
     // 5. Xóa step (DELETE)
-    .delete("/:id", async ({ params: { id }, set }) => {
+    .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteStep(id);
-            return { success: true, message: "Đã xóa step" };
+            return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === "P2025") {
                 set.status = 404;
-                return { success: false, message: "Không tìm thấy step để xóa" };
+                return { success: false, message: translate("errors.step.not_found_delete", locale(request)) };
             }
-
-            console.error("Lỗi khi xóa step:", error);
             set.status = 500;
-            return { success: false, message: "Lỗi hệ thống" };
+            return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
