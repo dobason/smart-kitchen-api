@@ -13,7 +13,7 @@ const locale = (req: Request) =>
 
 export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
 
-    // 1. Lấy tất cả (GET)
+    // Lấy tất cả (GET)
     .get("/", async ({ query, set, request }) => {
         try {
             const cookbooks = await getAllCookbooks({ userId: query.userId });
@@ -28,7 +28,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         })
     })
 
-    // 2. Lấy chi tiết (GET)
+    // Lấy chi tiết (GET)
     .get("/:id", async ({ params: { id }, set, request }) => {
         try {
             const cookbook = await getCookbookById(id);
@@ -45,7 +45,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         params: t.Object({ id: t.Numeric() })
     })
 
-    // 3. Tạo mới (POST)
+    // Tạo mới (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { name: string; userId: number };
@@ -69,7 +69,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         })
     })
 
-    // 4. Cập nhật (PUT)
+    // Cập nhật (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as { name?: string };
@@ -96,7 +96,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         })
     })
 
-    // 5. Xóa (DELETE)
+    // Xóa (DELETE)
     .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteCookbook(id);

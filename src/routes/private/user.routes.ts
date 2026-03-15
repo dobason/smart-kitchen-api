@@ -13,7 +13,7 @@ const locale = (req: Request) =>
 
 export const userRoutes = new Elysia({ prefix: "v1/users" })
 
-    // 1. Lấy tất cả users (GET)
+    // Lấy tất cả users (GET)
     .get("/", async ({ set, request }) => {
         try {
             const users = await getAllUsers();
@@ -24,7 +24,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         }
     })
 
-    // 2. Lấy chi tiết user (GET)
+    // Lấy chi tiết user (GET)
     .get("/:id", async ({ params: { id }, set, request }) => {
         try {
             const user = await getUserById(id);
@@ -41,7 +41,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         params: t.Object({ id: t.Numeric() }),
     })
 
-    // 3. Tạo mới user (POST)
+    // Tạo mới user (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
@@ -70,7 +70,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         }),
     })
 
-    // 4. Cập nhật user (PUT)
+    // Cập nhật user (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
@@ -114,7 +114,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
         }),
     })
 
-    // 5. Xóa user (DELETE)
+    // Xóa user (DELETE)
     .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteUser(id);

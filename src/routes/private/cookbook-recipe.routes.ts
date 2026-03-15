@@ -13,7 +13,7 @@ const locale = (req: Request) =>
 
 export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" })
 
-    // 1. Lấy tất cả cookbook recipes (GET)
+    // Lấy tất cả cookbook recipes (GET)
     .get("/", async ({ query, set, request }) => {
         try {
             const cookbookRecipes = await getAllCookbookRecipes({
@@ -32,7 +32,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
         }),
     })
 
-    // 2. Lấy chi tiết cookbook recipe (GET)
+    // Lấy chi tiết cookbook recipe (GET)
     .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             const cookbookRecipe = await getCookbookRecipeById(recipeId, cookbookId);
@@ -52,7 +52,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
         }),
     })
 
-    // 3. Tạo mới cookbook recipe (POST)
+    // Tạo mới cookbook recipe (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { recipeId: number; cookbookId: number };
@@ -70,7 +70,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
         }),
     })
 
-    // 4. Cập nhật cookbook recipe (PUT)
+    // Cập nhật cookbook recipe (PUT)
     .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, set, request }) => {
         try {
             const data = body as { recipeId?: number; cookbookId?: number };
@@ -102,7 +102,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
         }),
     })
 
-    // 5. Xóa cookbook recipe (DELETE)
+    // Xóa cookbook recipe (DELETE)
     .delete("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             await deleteCookbookRecipe(recipeId, cookbookId);
