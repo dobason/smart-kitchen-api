@@ -42,6 +42,6 @@ const privateRoutes = new Elysia()
     .use(privateTagRoutes);
 
 // --- 5. XUẤT RA API TỔNG HỢP ---
-export const apiRoutes = new Elysia({ prefix: "/api" })
+export const apiRoutes = new Elysia({ prefix: "/" })
     .use(publicRoutes)
     .use(privateRoutes);
