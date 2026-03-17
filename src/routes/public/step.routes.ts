@@ -23,6 +23,7 @@ export const publicStepRoutes = new Elysia({ prefix: "v1/steps" })
         query: t.Object({
             recipeId: t.Optional(t.Numeric()),
         }),
+        detail: { tags: ["Public"], summary: "Get all steps in recipe" }
     })
 
     // Lấy chi tiết step (GET)
@@ -40,4 +41,5 @@ export const publicStepRoutes = new Elysia({ prefix: "v1/steps" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Public"], summary: "Get step by id" }
     });

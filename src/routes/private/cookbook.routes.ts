@@ -1,5 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     getAllCookbooks,
     getCookbookById,
@@ -12,7 +14,21 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
-
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
     // Lấy tất cả (GET)
     .get("/", async ({ query, set, request }) => {
         try {
@@ -25,7 +41,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     }, {
         query: t.Object({
             userId: t.Optional(t.Numeric()),
-        })
+        }),
+        detail: { tags: ["Private"], summary: "Get all cookbooks" }
     })
 
     // Lấy chi tiết (GET)
@@ -42,7 +59,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() })
+        params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Get cookbook by id" }
     })
 
     // Tạo mới (POST)
@@ -66,7 +84,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         body: t.Object({
             name: t.String(),
             userId: t.Number()
-        })
+        }),
+        detail: { tags: ["Private"], summary: "Create new cookbook" }
     })
 
     // Cập nhật (PUT)
@@ -93,7 +112,8 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
             name: t.Optional(t.String()),
-        })
+        }),
+        detail: { tags: ["Private"], summary: "Update cookbook" }
     })
 
     // Xóa (DELETE)
@@ -110,5 +130,6 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() })
+        params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Delete cookbook" }
     });

@@ -1,5 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createRecipeTag,
     deleteRecipeTag,
@@ -10,7 +12,21 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
-    
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
     // Tạo mới recipe tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -27,6 +43,7 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Number(),
             tagId: t.Number(),
         }),
+        detail: { tags: ["Private"], summary: "Create new tag in recipe" }
     })
 
     // Cập nhật recipe tag (PUT)
@@ -59,6 +76,7 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Optional(t.Number()),
             tagId: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Update tag in recipe" }
     })
 
     // Xóa recipe tag (DELETE)
@@ -79,4 +97,5 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Numeric(),
             tagId: t.Numeric(),
         }),
+        detail: { tags: ["Private"], summary: "Delete tag in recipe" }
     });

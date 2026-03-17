@@ -7,6 +7,7 @@ import { publicRecipeTagRoutes } from "./public/recipe-tag.routes";
 import { publicRecipeRoutes } from "./public/recipe.routes";
 import { publicStepRoutes } from "./public/step.routes";
 import { publicTagRoutes } from "./public/tag.routes";
+import { publicUserRoutes } from "./public/user.routes";
 
 // --- 2. IMPORT CÁC FILE PRIVATE (CẦN ĐĂNG NHẬP) ---
 import { cookbookRoutes } from "./private/cookbook.routes";
@@ -18,6 +19,7 @@ import { privateRecipeTagRoutes } from "./private/recipe-tag.routes";
 import { privateRecipeRoutes } from "./private/recipe.routes";
 import { privateStepRoutes } from "./private/step.routes";
 import { privateTagRoutes } from "./private/tag.routes";
+import { authRoutes } from "./private/auth.routes";
 
 // --- 3. GOM NHÓM PUBLIC ---
 const publicRoutes = new Elysia()
@@ -26,11 +28,28 @@ const publicRoutes = new Elysia()
     .use(publicRecipeTagRoutes)
     .use(publicRecipeRoutes)
     .use(publicStepRoutes)
-    .use(publicTagRoutes);
+    .use(publicTagRoutes)
+    .use(publicUserRoutes);
 
 // --- 4. GOM NHÓM PRIVATE ---
-// (Sau này bạn chỉ cần gắn Middleware Clerk vào đúng cục privateRoutes này là khóa được toàn bộ hệ thống)
+import { clerkPlugin } from "elysia-clerk";
+
 const privateRoutes = new Elysia()
+    .use(clerkPlugin())
+    .derive(({ store }) => {
+        // elysia-clerk places auth on the store object
+        return {
+            auth: (store as any).auth
+        };
+    })
+    .onBeforeHandle(({ auth, set }) => {
+        if (!auth?.userId) {
+            set.status = 401;
+            return {
+                message: "Unauthorized - Authentication required",
+            };
+        }
+    })
     .use(cookbookRoutes)
     .use(cookbookRecipeRoutes)
     .use(userRoutes)
@@ -39,7 +58,8 @@ const privateRoutes = new Elysia()
     .use(privateRecipeTagRoutes)
     .use(privateRecipeRoutes)
     .use(privateStepRoutes)
-    .use(privateTagRoutes);
+    .use(privateTagRoutes)
+    .use(authRoutes);
 
 // --- 5. XUẤT RA API TỔNG HỢP ---
 export const apiRoutes = new Elysia({ prefix: "/" })

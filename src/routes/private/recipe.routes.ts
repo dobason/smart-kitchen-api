@@ -1,5 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createRecipe,
     deleteRecipe,
@@ -14,7 +16,21 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
-    
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
     // Tạo mới recipe (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -45,6 +61,7 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
             sourceType: sourceTypeSchema, numberOfServes: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Create new recipe" }
     })
 
     // Cập nhật recipe (PUT)
@@ -87,6 +104,7 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
             sourceType: sourceTypeSchema, numberOfServes: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Update recipe" }
     })
 
     // Xóa recipe (DELETE)
@@ -104,4 +122,5 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Delete recipe" }
     });

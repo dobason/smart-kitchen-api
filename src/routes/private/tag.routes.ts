@@ -1,5 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createTag,
     deleteTag,
@@ -10,7 +12,21 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
-    
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
     // Tạo mới tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -32,6 +48,7 @@ export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
         body: t.Object({
             name: t.String(), category: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Create new tag" }
     })
 
     // Cập nhật tag (PUT)
@@ -65,6 +82,7 @@ export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
         body: t.Object({
             name: t.Optional(t.String()), category: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Update tag" }
     })
 
     // Xóa tag (DELETE)
@@ -82,4 +100,5 @@ export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Delete tag" }
     });

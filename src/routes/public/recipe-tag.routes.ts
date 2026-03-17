@@ -27,6 +27,7 @@ export const publicRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Optional(t.Numeric()),
             tagId: t.Optional(t.Numeric()),
         }),
+        detail: { tags: ["Public"], summary: "Get all tags in recipe" }
     })
 
     // Lấy chi tiết recipe tag (GET)
@@ -47,4 +48,5 @@ export const publicRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Numeric(),
             tagId: t.Numeric(),
         }),
+        detail: { tags: ["Public"], summary: "Get tag in recipe by id" }
     });

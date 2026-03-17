@@ -10,7 +10,7 @@ const app = new Elysia()
       info: {
         title: "Smart Kitchen VN API",
         version: "1.0.0",
-        description: "Hệ thống API cho ứng dụng Smart Kitchen VN"
+        description: "Test API for Smart Kitchen VN. \n\nClerk Publishable Key for testing: `pk_test_cmVuZXdlZC1oZXJtaXQtMzAuY2xlcmsuYWNjb3VudHMuZGV2JA`"
       }
     }
   }))
