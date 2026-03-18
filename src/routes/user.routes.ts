@@ -38,7 +38,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ id: t.String() }),
     })
 
     // 3. Tạo mới user (POST)
@@ -106,7 +106,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ id: t.String() }),
         body: t.Object({
             email: t.Optional(t.String()),
             username: t.Optional(t.String()),
@@ -128,5 +128,5 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ id: t.String() }),
     });
