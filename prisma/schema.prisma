@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -22,7 +21,7 @@ enum SourceType {
 }
 
 model User {
-  id           Int        @id @default(autoincrement()) @map("user_id")
+  userId       String     @id @default(uuid()) @map("user_id")
   email        String     @unique
   username     String
   avartarUrl   String?    @map("avartar_url")
@@ -36,8 +35,8 @@ model User {
 }
 
 model Recipe {
-  id             Int              @id @default(autoincrement()) @map("recipe_id")
-  userId         Int              @map("user_id")
+  recipeId       Int           @id @default(autoincrement()) @map("recipe_id")
+  userId         String           @map("user_id")
   recipesName    String           @map("recipes_name")
   description    String?          @db.Text
   imageRecipe    String?          @map("image_recipe")
@@ -51,7 +50,7 @@ model Recipe {
   updatedAt      DateTime         @updatedAt @map("updated_at")
   numberOfServes Int?             @map("number_of_serves")
 
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
   steps             Step[]
   cookbookRecipes   CookbookRecipe[]
   recipeTags        RecipeTag[]
@@ -61,13 +60,13 @@ model Recipe {
 }
 
 model Cookbook {
-  id        Int      @id @default(autoincrement()) @map("cookbook_id")
-  userId    Int      @map("user_id")
-  name      String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  cookbookId        Int      @id @default(autoincrement()) @map("cookbook_id")
+  userId            String      @map("user_id")
+  name              String
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
 
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
   cookbookRecipes CookbookRecipe[]
 
   @@index([createdAt])
@@ -77,18 +76,18 @@ model Cookbook {
 model CookbookRecipe {
   recipeId   Int      @map("recipe_id")
   cookbookId Int      @map("cookbook_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
 
-  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  cookbook  Cookbook  @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  cookbook  Cookbook  @relation(fields: [cookbookId], references: [cookbookId], onDelete: Cascade)
 
   @@id([recipeId, cookbookId])
   @@map("cookbook_recipes")
 }
 
 model Step {
-  id         Int      @id @default(autoincrement()) @map("step_id")
+  stepId         Int      @id @default(autoincrement()) @map("step_id")
   recipeId   Int      @map("recipe_id")
   stepNumber Int      @map("step_number")
   instruction String  @db.Text
@@ -97,13 +96,13 @@ model Step {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   @@map("steps")
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement()) @map("tag_id")
+  tagId        Int      @id @default(autoincrement()) @map("tag_id")
   name      String
   category  String?
   createdAt DateTime @default(now()) @map("created_at")
@@ -118,15 +117,15 @@ model RecipeTag {
   recipeId Int @map("recipe_id")
   tagId    Int @map("tag_id")
 
-  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [tagId], onDelete: Cascade)
 
   @@id([recipeId, tagId])
   @@map("recipe_tags")
 }
 
 model Ingredient {
-  id        Int      @id @default(autoincrement()) @map("ingredient_id")
+  ingredientId        Int      @id @default(autoincrement()) @map("ingredient_id")
   name      String
   icon      String?
   createdAt DateTime @default(now()) @map("created_at")
@@ -144,8 +143,8 @@ model RecipeIngredient {
   unit         String?
   note         String?
 
-  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  recipe     Recipe     @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [ingredientId], onDelete: Cascade)
 
   @@id([recipeId, ingredientId])
   @@map("recipe_ingredients")

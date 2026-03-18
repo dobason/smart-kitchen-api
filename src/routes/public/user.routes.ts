@@ -42,6 +42,6 @@ export const publicUserRoutes = new Elysia({
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ userId: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
         detail: { tags: ["Public"], summary: "Get a user by ID" }
     })

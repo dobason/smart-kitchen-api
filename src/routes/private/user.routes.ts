@@ -56,7 +56,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ userId: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
         detail: { tags: ["Private"], summary: "Get user by id" }
     })
 
@@ -126,7 +126,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ userId: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
         body: t.Object({
             email: t.Optional(t.String()),
             username: t.Optional(t.String()),
@@ -149,6 +149,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ userId: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
         detail: { tags: ["Private"], summary: "Delete user" }
     });
