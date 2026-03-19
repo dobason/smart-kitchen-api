@@ -21,7 +21,7 @@ enum SourceType {
 }
 
 model User {
-  id       String     @id @default(uuid()) @map("user_id")
+  userId       String     @id @default(uuid()) @map("user_id")
   email        String     @unique
   username     String
   avartarUrl   String?    @map("avartar_url")
