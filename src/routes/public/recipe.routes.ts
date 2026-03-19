@@ -28,7 +28,7 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         query: t.Object({
-            userId: t.Optional(t.Numeric()),
+            userId: t.Optional(t.String()),
             sourceType: sourceTypeSchema,
         }),
         detail: { tags: ["Public"], summary: "Get all recipes" }

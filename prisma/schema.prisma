@@ -36,7 +36,7 @@ model User {
 
 model Recipe {
   id       Int           @id @default(autoincrement()) @map("recipe_id")
-  id         String           @map("user_id")
+  userId         String           @map("user_id")
   recipesName    String           @map("recipes_name")
   description    String?          @db.Text
   imageRecipe    String?          @map("image_recipe")
@@ -50,7 +50,7 @@ model Recipe {
   updatedAt      DateTime         @updatedAt @map("updated_at")
   numberOfServes Int?             @map("number_of_serves")
 
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
   steps             Step[]
   cookbookRecipes   CookbookRecipe[]
   recipeTags        RecipeTag[]
@@ -66,7 +66,7 @@ model Cookbook {
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @updatedAt @map("updated_at")
 
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
   cookbookRecipes CookbookRecipe[]
 
   @@index([createdAt])
@@ -74,7 +74,7 @@ model Cookbook {
 }
 
 model CookbookRecipe {
-  id   Int      @map("recipe_id")
+  recipeId   Int      @map("recipe_id")
   cookbookId Int      @map("cookbook_id")
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")

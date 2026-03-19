@@ -40,7 +40,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         }
     }, {
         query: t.Object({
-            userId: t.Optional(t.Numeric()),
+            userId: t.Optional(t.String()),
         }),
         detail: { tags: ["Private"], summary: "Get all cookbooks" }
     })
@@ -66,7 +66,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     // Tạo mới (POST)
     .post("/", async ({ body, set, request }) => {
         try {
-            const data = body as { name: string; userId: number };
+            const data = body as { name: string; userId: string };
 
             if (!data.name?.trim()) {
                 set.status = 400;
@@ -83,7 +83,7 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
     }, {
         body: t.Object({
             name: t.String(),
-            userId: t.Number()
+            userId: t.String()
         }),
         detail: { tags: ["Private"], summary: "Create new cookbook" }
     })
