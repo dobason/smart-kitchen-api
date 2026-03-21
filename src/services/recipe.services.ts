@@ -4,7 +4,7 @@ import { rethrowIfNotFound } from "./service.helpers";
 export type SourceTypeValue = "MANUAL" | "IMPORTED" | "AI_GENERATED";
 
 export type CreateRecipeInput = {
-    userId: number;
+    userId: string;
     recipesName: string;
     description?: string;
     imageRecipe?: string;
@@ -19,7 +19,7 @@ export type CreateRecipeInput = {
 
 export type UpdateRecipeInput = Partial<CreateRecipeInput>;
 export type RecipeFilter = {
-    userId?: number;
+    userId?: string;
     sourceType?: SourceTypeValue;
 };
 

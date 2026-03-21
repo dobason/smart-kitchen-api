@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,7 +21,7 @@ enum SourceType {
 }
 
 model User {
-  id           Int        @id @default(autoincrement()) @map("user_id")
+  userId       String     @id @default(uuid()) @map("user_id")
   email        String     @unique
   username     String
   avartarUrl   String?    @map("avartar_url")
@@ -29,8 +35,8 @@ model User {
 }
 
 model Recipe {
-  id             Int              @id @default(autoincrement()) @map("recipe_id")
-  userId         Int              @map("user_id")
+  id       Int           @id @default(autoincrement()) @map("recipe_id")
+  userId         String           @map("user_id")
   recipesName    String           @map("recipes_name")
   description    String?          @db.Text
   imageRecipe    String?          @map("image_recipe")
@@ -44,7 +50,7 @@ model Recipe {
   updatedAt      DateTime         @updatedAt @map("updated_at")
   numberOfServes Int?             @map("number_of_serves")
 
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
   steps             Step[]
   cookbookRecipes   CookbookRecipe[]
   recipeTags        RecipeTag[]
@@ -55,12 +61,12 @@ model Recipe {
 
 model Cookbook {
   id        Int      @id @default(autoincrement()) @map("cookbook_id")
-  userId    Int      @map("user_id")
-  name      String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  userId            String      @map("user_id")
+  name              String
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
 
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [userId], onDelete: Cascade)
   cookbookRecipes CookbookRecipe[]
 
   @@index([createdAt])
@@ -70,8 +76,8 @@ model Cookbook {
 model CookbookRecipe {
   recipeId   Int      @map("recipe_id")
   cookbookId Int      @map("cookbook_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
 
   recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   cookbook  Cookbook  @relation(fields: [cookbookId], references: [id], onDelete: Cascade)

@@ -1,59 +1,38 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createStep,
     deleteStep,
-    getAllSteps,
-    getStepById,
     updateStep,
-} from "../services/step.services";
+} from "../../services/step.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
-export const stepRoutes = new Elysia({ prefix: "v1/steps" })
-
-    // 1. Lấy tất cả steps (GET)
-    .get("/", async ({ query, set, request }) => {
-        try {
-            const steps = await getAllSteps({ recipeId: query.recipeId });
-            return { success: true, data: steps };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.step.fetch", locale(request)) };
+export const privateStepRoutes = new Elysia({ prefix: "v1/steps" })
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
         }
-    }, {
-        query: t.Object({
-            recipeId: t.Optional(t.Numeric()),
-        }),
     })
-
-    // 2. Lấy chi tiết step (GET)
-    .get("/:id", async ({ params: { id }, set, request }) => {
-        try {
-            const step = await getStepById(id);
-            if (!step) {
-                set.status = 404;
-                return { success: false, message: translate("errors.step.not_found", locale(request)) };
-            }
-            return { success: true, data: step };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.system", locale(request)) };
-        }
-    }, {
-        params: t.Object({ id: t.Numeric() }),
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
     })
-
-    // 3. Tạo mới step (POST)
+    // Tạo mới step (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
-                recipeId: number;
-                stepNumber: number;
-                instruction: string;
-                tip?: string;
-                time?: number;
+                recipeId: number; stepNumber: number; instruction: string;
+                tip?: string; time?: number;
             };
 
             if (!data.instruction.trim()) {
@@ -70,23 +49,18 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
         }
     }, {
         body: t.Object({
-            recipeId: t.Number(),
-            stepNumber: t.Number(),
-            instruction: t.String(),
-            tip: t.Optional(t.String()),
-            time: t.Optional(t.Number()),
+            recipeId: t.Number(), stepNumber: t.Number(), instruction: t.String(),
+            tip: t.Optional(t.String()), time: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Create new step" }
     })
 
-    // 4. Cập nhật step (PUT)
+    // Cập nhật step (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
-                recipeId?: number;
-                stepNumber?: number;
-                instruction?: string;
-                tip?: string;
-                time?: number;
+                recipeId?: number; stepNumber?: number; instruction?: string;
+                tip?: string; time?: number;
             };
 
             if (data.instruction !== undefined && !data.instruction.trim()) {
@@ -113,15 +87,14 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
     }, {
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
-            recipeId: t.Optional(t.Number()),
-            stepNumber: t.Optional(t.Number()),
-            instruction: t.Optional(t.String()),
-            tip: t.Optional(t.String()),
+            recipeId: t.Optional(t.Number()), stepNumber: t.Optional(t.Number()),
+            instruction: t.Optional(t.String()), tip: t.Optional(t.String()),
             time: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Update step" }
     })
 
-    // 5. Xóa step (DELETE)
+    // Xóa step (DELETE)
     .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteStep(id);
@@ -136,4 +109,5 @@ export const stepRoutes = new Elysia({ prefix: "v1/steps" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Delete step" }
     });

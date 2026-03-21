@@ -1,58 +1,33 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createRecipeIngredient,
     deleteRecipeIngredient,
-    getAllRecipeIngredients,
-    getRecipeIngredientById,
     updateRecipeIngredient,
-} from "../services/recipe-ingredient.services";
+} from "../../services/recipe-ingredient.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
-export const recipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredients" })
-
-    // 1. Lấy tất cả recipe ingredients (GET)
-    .get("/", async ({ query, set, request }) => {
-        try {
-            const recipeIngredients = await getAllRecipeIngredients({
-                recipeId: query.recipeId,
-                ingredientId: query.ingredientId,
-            });
-            return { success: true, data: recipeIngredients };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.recipe_ingredient.fetch", locale(request)) };
+export const privateRecipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredients" })
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
         }
-    }, {
-        query: t.Object({
-            recipeId: t.Optional(t.Numeric()),
-            ingredientId: t.Optional(t.Numeric()),
-        }),
     })
-
-    // 2. Lấy chi tiết recipe ingredient (GET)
-    .get("/:recipeId/:ingredientId", async ({ params: { recipeId, ingredientId }, set, request }) => {
-        try {
-            const recipeIngredient = await getRecipeIngredientById(recipeId, ingredientId);
-            if (!recipeIngredient) {
-                set.status = 404;
-                return { success: false, message: translate("errors.recipe_ingredient.not_found", locale(request)) };
-            }
-            return { success: true, data: recipeIngredient };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.system", locale(request)) };
-        }
-    }, {
-        params: t.Object({
-            recipeId: t.Numeric(),
-            ingredientId: t.Numeric(),
-        }),
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
     })
-
-    // 3. Tạo mới recipe ingredient (POST)
+    // Tạo mới recipe ingredient (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
@@ -77,9 +52,10 @@ export const recipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredient
             unit: t.Optional(t.String()),
             note: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Create new ingredient in recipe" }
     })
 
-    // 4. Cập nhật recipe ingredient (PUT)
+    // Cập nhật recipe ingredient (PUT)
     .put("/:recipeId/:ingredientId", async ({ params: { recipeId, ingredientId }, body, set, request }) => {
         try {
             const data = body as {
@@ -118,9 +94,10 @@ export const recipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredient
             unit: t.Optional(t.String()),
             note: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Update ingredient in recipe" }
     })
 
-    // 5. Xóa recipe ingredient (DELETE)
+    // Xóa recipe ingredient (DELETE)
     .delete("/:recipeId/:ingredientId", async ({ params: { recipeId, ingredientId }, set, request }) => {
         try {
             await deleteRecipeIngredient(recipeId, ingredientId);
@@ -138,4 +115,5 @@ export const recipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingredient
             recipeId: t.Numeric(),
             ingredientId: t.Numeric(),
         }),
+        detail: { tags: ["Private"], summary: "Delete ingredient in recipe" }
     });

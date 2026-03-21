@@ -3,12 +3,12 @@ import { rethrowIfNotFound } from "./service.helpers";
 
 export type CreateCookbookInput = {
     name: string;
-    userId: number;
+    userId: string;
 };
 
 export type UpdateCookbookInput = Partial<CreateCookbookInput>;
 export type CookbookFilter = {
-    userId?: number;
+    userId?: string;
 };
 
 // Hàm lấy tất cả cookbook, có thể lọc theo userId

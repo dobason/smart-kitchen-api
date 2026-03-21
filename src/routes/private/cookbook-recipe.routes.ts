@@ -1,19 +1,35 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createCookbookRecipe,
     deleteCookbookRecipe,
     getAllCookbookRecipes,
     getCookbookRecipeById,
     updateCookbookRecipe,
-} from "../services/cookbook-recipe.services";
+} from "../../services/cookbook-recipe.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" })
-
-    // 1. Lấy tất cả cookbook recipes (GET)
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
+    // Lấy tất cả cookbook recipes (GET)
     .get("/", async ({ query, set, request }) => {
         try {
             const cookbookRecipes = await getAllCookbookRecipes({
@@ -22,7 +38,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             });
             return { success: true, data: cookbookRecipes };
         } catch (error) {
-            set.status = 500;
+            set.status = HttpStatus.INTERNAL_SERVER_ERROR;
             return { success: false, message: translate("errors.cookbook_recipe.fetch", locale(request)) };
         }
     }, {
@@ -30,19 +46,20 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             recipeId: t.Optional(t.Numeric()),
             cookbookId: t.Optional(t.Numeric()),
         }),
+        detail: { tags: ["Private"], summary: "Get all recipes in cookbook" }
     })
 
-    // 2. Lấy chi tiết cookbook recipe (GET)
+    // Lấy chi tiết cookbook recipe (GET)
     .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             const cookbookRecipe = await getCookbookRecipeById(recipeId, cookbookId);
             if (!cookbookRecipe) {
-                set.status = 404;
+                set.status = HttpStatus.NOT_FOUND;
                 return { success: false, message: translate("errors.cookbook_recipe.not_found", locale(request)) };
             }
             return { success: true, data: cookbookRecipe };
         } catch (error) {
-            set.status = 500;
+            set.status = HttpStatus.INTERNAL_SERVER_ERROR;
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
@@ -50,9 +67,10 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             recipeId: t.Numeric(),
             cookbookId: t.Numeric(),
         }),
+        detail: { tags: ["Private"], summary: "Get recipe in cookbook by id" }
     })
 
-    // 3. Tạo mới cookbook recipe (POST)
+    // Tạo mới cookbook recipe (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { recipeId: number; cookbookId: number };
@@ -68,9 +86,10 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             recipeId: t.Number(),
             cookbookId: t.Number(),
         }),
+        detail: { tags: ["Private"], summary: "Create new recipe in cookbook" }
     })
 
-    // 4. Cập nhật cookbook recipe (PUT)
+    // Cập nhật cookbook recipe (PUT)
     .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, set, request }) => {
         try {
             const data = body as { recipeId?: number; cookbookId?: number };
@@ -100,9 +119,10 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             recipeId: t.Optional(t.Number()),
             cookbookId: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Update recipe in cookbook" }
     })
 
-    // 5. Xóa cookbook recipe (DELETE)
+    // Xóa cookbook recipe (DELETE)
     .delete("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
         try {
             await deleteCookbookRecipe(recipeId, cookbookId);
@@ -120,4 +140,5 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
             recipeId: t.Numeric(),
             cookbookId: t.Numeric(),
         }),
+        detail: { tags: ["Private"], summary: "Delete recipe in cookbook" }
     });

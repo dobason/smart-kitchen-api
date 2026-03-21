@@ -1,47 +1,33 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createIngredient,
     deleteIngredient,
-    getAllIngredients,
-    getIngredientById,
     updateIngredient,
-} from "../services/ingredient.services";
+} from "../../services/ingredient.services"; 
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
-export const ingredientRoutes = new Elysia({ prefix: "v1/ingredients" })
-
-    // 1. Lấy tất cả ingredients (GET)
-    .get("/", async ({ set, request }) => {
-        try {
-            const ingredients = await getAllIngredients();
-            return { success: true, data: ingredients };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.ingredient.fetch", locale(request)) };
+export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
         }
     })
-
-    // 2. Lấy chi tiết ingredient (GET)
-    .get("/:id", async ({ params: { id }, set, request }) => {
-        try {
-            const ingredient = await getIngredientById(id);
-            if (!ingredient) {
-                set.status = 404;
-                return { success: false, message: translate("errors.ingredient.not_found", locale(request)) };
-            }
-            return { success: true, data: ingredient };
-        } catch (error) {
-            set.status = 500;
-            return { success: false, message: translate("errors.system", locale(request)) };
-        }
-    }, {
-        params: t.Object({ id: t.Numeric() }),
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
     })
-
-    // 3. Tạo mới ingredient (POST)
+    // Tạo mới ingredient (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as { name: string; icon?: string };
@@ -63,9 +49,10 @@ export const ingredientRoutes = new Elysia({ prefix: "v1/ingredients" })
             name: t.String(),
             icon: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Create new ingredient" }
     })
 
-    // 4. Cập nhật ingredient (PUT)
+    // Cập nhật ingredient (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as { name?: string; icon?: string };
@@ -97,9 +84,10 @@ export const ingredientRoutes = new Elysia({ prefix: "v1/ingredients" })
             name: t.Optional(t.String()),
             icon: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Update ingredient" }
     })
 
-    // 5. Xóa ingredient (DELETE)
+    // Xóa ingredient (DELETE)
     .delete("/:id", async ({ params: { id }, set, request }) => {
         try {
             await deleteIngredient(id);
@@ -114,4 +102,5 @@ export const ingredientRoutes = new Elysia({ prefix: "v1/ingredients" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+        detail: { tags: ["Private"], summary: "Delete ingredient" }
     });

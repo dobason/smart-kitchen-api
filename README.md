@@ -61,7 +61,7 @@ Prisma giúp thao tác với PostgreSQL an toàn và chặt chẽ hơn qua TypeS
   bunx prisma init
   ```
  * **Cấu hình Database:**
- * 1.Mở file .env vừa được sinh ra, cập nhật biến DATABASE_URL trỏ tới chuỗi kết nối PostgreSQL của bạn.
+ * 1. Tạo file `.env` bằng cách copy từ `.env.example`, sau đó cập nhật biến DATABASE_URL trỏ tới chuỗi kết nối PostgreSQL của bạn.
  * 2.Đồng bộ cấu trúc dữ liệu lên database:
    ```bash
    bunx prisma db push

@@ -1,15 +1,7 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { i18n } from "./plugins/i18n";
-import { cookbookRoutes } from "./routes/cookbook.routes";
-import { userRoutes } from "./routes/user.routes";
-import { recipeRoutes } from "./routes/recipe.routes";
-import { stepRoutes } from "./routes/step.routes";
-import { tagRoutes } from "./routes/tag.routes";
-import { ingredientRoutes } from "./routes/ingredient.routes";
-import { cookbookRecipeRoutes } from "./routes/cookbook-recipe.routes";
-import { recipeTagRoutes } from "./routes/recipe-tag.routes";
-import { recipeIngredientRoutes } from "./routes/recipe-ingredient.routes";
+import { apiRoutes } from "./routes";
 const port = Number(process.env.PORT) || 3000;
 
 const app = new Elysia()
@@ -18,20 +10,12 @@ const app = new Elysia()
       info: {
         title: "Smart Kitchen VN API",
         version: "1.0.0",
-        description: "Hệ thống API cho ứng dụng Smart Kitchen VN"
+        description: "Test API for Smart Kitchen VN. \n\nClerk Publishable Key for testing: `pk_test_cmVuZXdlZC1oZXJtaXQtMzAuY2xlcmsuYWNjb3VudHMuZGV2JA`"
       }
     }
   }))
   .use(i18n())
-  .use(cookbookRoutes)
-  .use(userRoutes)
-  .use(recipeRoutes)
-  .use(stepRoutes)
-  .use(tagRoutes)
-  .use(ingredientRoutes)
-  .use(cookbookRecipeRoutes)
-  .use(recipeTagRoutes)
-  .use(recipeIngredientRoutes)
+  .use(apiRoutes)
   .listen(port);
 
 console.log(`🦊 SmartKitchen API is running at http://${app.server?.hostname}:${app.server?.port}`);

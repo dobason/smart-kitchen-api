@@ -1,19 +1,35 @@
 import { Elysia, t } from "elysia";
-import { t as translate } from "../plugins/i18n";
+import { t as translate } from "../../plugins/i18n";
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
 import {
     createUser,
     deleteUser,
     getAllUsers,
     getUserById,
     updateUser,
-} from "../services/user.services";
+} from "../../services/user.services";
 
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const userRoutes = new Elysia({ prefix: "v1/users" })
-
-    // 1. Lấy tất cả users (GET)
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
+    // Lấy tất cả users (GET)
     .get("/", async ({ set, request }) => {
         try {
             const users = await getAllUsers();
@@ -22,12 +38,14 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             set.status = 500;
             return { success: false, message: translate("errors.user.fetch", locale(request)) };
         }
+    }, {
+        detail: { tags: ["Private"], summary: "Get all users" }
     })
 
-    // 2. Lấy chi tiết user (GET)
-    .get("/:id", async ({ params: { id }, set, request }) => {
+    // Lấy chi tiết user (GET)
+    .get("/:userId", async ({ params: { userId }, set, request }) => {
         try {
-            const user = await getUserById(id);
+            const user = await getUserById(userId);
             if (!user) {
                 set.status = 404;
                 return { success: false, message: translate("errors.user.not_found", locale(request)) };
@@ -38,10 +56,11 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
+        detail: { tags: ["Private"], summary: "Get user by id" }
     })
 
-    // 3. Tạo mới user (POST)
+    // Tạo mới user (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
@@ -68,10 +87,11 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             username: t.String(),
             avartarUrl: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Create new user" }
     })
 
-    // 4. Cập nhật user (PUT)
-    .put("/:id", async ({ params: { id }, body, set, request }) => {
+    // Cập nhật user (PUT)
+    .put("/:userId", async ({ params: { userId }, body, set, request }) => {
         try {
             const data = body as {
                 email?: string;
@@ -95,7 +115,7 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
                 return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
-            const updatedUser = await updateUser(id, data);
+            const updatedUser = await updateUser(userId, data);
             return { success: true, message: translate("success.updated", locale(request)), data: updatedUser };
         } catch (error: any) {
             if (error?.code === "P2025") {
@@ -106,18 +126,19 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
         body: t.Object({
             email: t.Optional(t.String()),
             username: t.Optional(t.String()),
             avartarUrl: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Update user" }
     })
 
-    // 5. Xóa user (DELETE)
-    .delete("/:id", async ({ params: { id }, set, request }) => {
+    // Xóa user (DELETE)
+    .delete("/:userId", async ({ params: { userId }, set, request }) => {
         try {
-            await deleteUser(id);
+            await deleteUser(userId);
             return { success: true, message: translate("success.deleted", locale(request)) };
         } catch (error: any) {
             if (error?.code === "P2025") {
@@ -128,5 +149,6 @@ export const userRoutes = new Elysia({ prefix: "v1/users" })
             return { success: false, message: translate("errors.system", locale(request)) };
         }
     }, {
-        params: t.Object({ id: t.Numeric() }),
+        params: t.Object({ userId: t.String() }),
+        detail: { tags: ["Private"], summary: "Delete user" }
     });
