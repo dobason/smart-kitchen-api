@@ -1,10 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
-<<<<<<< HEAD
-=======
 import { HttpStatus } from "../../types";
 import { clerkPlugin } from "elysia-clerk";
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
 import {
     createTag,
     deleteTag,
@@ -15,9 +12,6 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
-<<<<<<< HEAD
-    
-=======
     .use(clerkPlugin())
     .onBeforeHandle(({ auth, set, request }) => {
         const { userId } = auth();
@@ -33,7 +27,6 @@ export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
         const { userId } = auth();
         return { userId: userId as string };
     })
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     // Tạo mới tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -107,8 +100,5 @@ export const privateTagRoutes = new Elysia({ prefix: "v1/tags" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Private"], summary: "Delete tag" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

@@ -28,16 +28,10 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         query: t.Object({
-<<<<<<< HEAD
-            userId: t.Optional(t.Numeric()),
-            sourceType: sourceTypeSchema,
-        }),
-=======
             userId: t.Optional(t.String()),
             sourceType: sourceTypeSchema,
         }),
         detail: { tags: ["Public"], summary: "Get all recipes" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Lấy chi tiết recipe (GET)
@@ -55,8 +49,5 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Public"], summary: "Get recipe by id" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

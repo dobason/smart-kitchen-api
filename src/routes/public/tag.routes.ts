@@ -19,11 +19,8 @@ export const publicTagRoutes = new Elysia({ prefix: "v1/tags" })
             set.status = 500;
             return { success: false, message: translate("errors.tag.fetch", locale(request)) };
         }
-<<<<<<< HEAD
-=======
     }, {
         detail: { tags: ["Public"], summary: "Get all tags" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Lấy chi tiết tag (GET)
@@ -41,8 +38,5 @@ export const publicTagRoutes = new Elysia({ prefix: "v1/tags" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Public"], summary: "Get tag by id" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

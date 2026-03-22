@@ -27,10 +27,7 @@ export const publicRecipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingr
             recipeId: t.Optional(t.Numeric()),
             ingredientId: t.Optional(t.Numeric()),
         }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Public"], summary: "Get all ingredients in recipe" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Lấy chi tiết recipe ingredient (GET)
@@ -51,8 +48,5 @@ export const publicRecipeIngredientRoutes = new Elysia({ prefix: "v1/recipe-ingr
             recipeId: t.Numeric(),
             ingredientId: t.Numeric(),
         }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Public"], summary: "Get ingredient in recipe by id" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

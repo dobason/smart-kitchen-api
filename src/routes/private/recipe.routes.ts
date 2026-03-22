@@ -1,10 +1,7 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
-<<<<<<< HEAD
-=======
 import { HttpStatus } from "../../types";
 import { clerkPlugin } from "elysia-clerk";
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
 import {
     createRecipe,
     deleteRecipe,
@@ -19,9 +16,6 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
-<<<<<<< HEAD
-    
-=======
     .use(clerkPlugin())
     .onBeforeHandle(({ auth, set, request }) => {
         const { userId } = auth();
@@ -37,16 +31,11 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         const { userId } = auth();
         return { userId: userId as string };
     })
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     // Tạo mới recipe (POST)
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
-<<<<<<< HEAD
-                userId: number; recipesName: string; description?: string;
-=======
                 userId: string; recipesName: string; description?: string;
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
                 imageRecipe?: string; totalTime?: number; calories?: number;
                 protein?: number; carbs?: number; fats?: number;
                 sourceType?: "MANUAL" | "IMPORTED" | "AI_GENERATED"; numberOfServes?: number;
@@ -66,31 +55,20 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         body: t.Object({
-<<<<<<< HEAD
-            userId: t.Number(), recipesName: t.String(), description: t.Optional(t.String()),
-=======
             userId: t.String(), recipesName: t.String(), description: t.Optional(t.String()),
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
             imageRecipe: t.Optional(t.String()), totalTime: t.Optional(t.Number()),
             calories: t.Optional(t.Number()), protein: t.Optional(t.Number()),
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
             sourceType: sourceTypeSchema, numberOfServes: t.Optional(t.Number()),
         }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Private"], summary: "Create new recipe" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Cập nhật recipe (PUT)
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
-<<<<<<< HEAD
-                userId?: number; recipesName?: string; description?: string;
-=======
                 userId?: string; recipesName?: string; description?: string;
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
                 imageRecipe?: string; totalTime?: number; calories?: number;
                 protein?: number; carbs?: number; fats?: number;
                 sourceType?: "MANUAL" | "IMPORTED" | "AI_GENERATED"; numberOfServes?: number;
@@ -120,20 +98,13 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     }, {
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
-<<<<<<< HEAD
-            userId: t.Optional(t.Number()), recipesName: t.Optional(t.String()), description: t.Optional(t.String()),
-=======
             userId: t.Optional(t.String()), recipesName: t.Optional(t.String()), description: t.Optional(t.String()),
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
             imageRecipe: t.Optional(t.String()), totalTime: t.Optional(t.Number()),
             calories: t.Optional(t.Number()), protein: t.Optional(t.Number()),
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
             sourceType: sourceTypeSchema, numberOfServes: t.Optional(t.Number()),
         }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Private"], summary: "Update recipe" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Xóa recipe (DELETE)
@@ -151,8 +122,5 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
-<<<<<<< HEAD
-=======
         detail: { tags: ["Private"], summary: "Delete recipe" }
->>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });
