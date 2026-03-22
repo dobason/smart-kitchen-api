@@ -17,9 +17,9 @@ export const getAllUsers = async () => {
 };
 
 // Hàm lấy chi tiết người dùng theo ID
-export const getUserById = async (id: number) => {
+export const getUserById = async (userId: string) => {
     return await prisma.user.findUnique({
-        where: { id },
+        where: { userId },
     });
 };
 
@@ -31,10 +31,10 @@ export const createUser = async (data: CreateUserInput) => {
 };
 
 // Hàm cập nhật người dùng
-export const updateUser = async (id: number, data: UpdateUserInput) => {
+export const updateUser = async (userId: string, data: UpdateUserInput) => {
     try {
         return await prisma.user.update({
-            where: { id },
+            where: { userId },
             data,
         });
     } catch (error) {
@@ -43,10 +43,10 @@ export const updateUser = async (id: number, data: UpdateUserInput) => {
 };
 
 // Hàm xóa người dùng
-export const deleteUser = async (id: number) => {
+export const deleteUser = async (userId: string) => {
     try {
         return await prisma.user.delete({
-            where: { id },
+            where: { userId },
         });
     } catch (error) {
         rethrowIfNotFound(error, "User");

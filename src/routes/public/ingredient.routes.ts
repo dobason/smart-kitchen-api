@@ -19,6 +19,11 @@ export const publicIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
             set.status = 500;
             return { success: false, message: translate("errors.ingredient.fetch", locale(request)) };
         }
+<<<<<<< HEAD
+=======
+    }, {
+        detail: { tags: ["Public"], summary: "Get all ingredients" }
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     })
 
     // Lấy chi tiết ingredient (GET)
@@ -36,4 +41,8 @@ export const publicIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+<<<<<<< HEAD
+=======
+        detail: { tags: ["Public"], summary: "Get ingredient by id" }
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

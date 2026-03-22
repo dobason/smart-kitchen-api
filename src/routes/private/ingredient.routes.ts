@@ -1,5 +1,10 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+<<<<<<< HEAD
+=======
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
 import {
     createIngredient,
     deleteIngredient,
@@ -10,7 +15,25 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
+<<<<<<< HEAD
     
+=======
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     // Tạo mới ingredient (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -33,6 +56,7 @@ export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
             name: t.String(),
             icon: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Create new ingredient" }
     })
 
     // Cập nhật ingredient (PUT)
@@ -67,6 +91,7 @@ export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
             name: t.Optional(t.String()),
             icon: t.Optional(t.String()),
         }),
+        detail: { tags: ["Private"], summary: "Update ingredient" }
     })
 
     // Xóa ingredient (DELETE)
@@ -84,4 +109,8 @@ export const privateIngredientRoutes = new Elysia({ prefix: "v1/ingredients" })
         }
     }, {
         params: t.Object({ id: t.Numeric() }),
+<<<<<<< HEAD
+=======
+        detail: { tags: ["Private"], summary: "Delete ingredient" }
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

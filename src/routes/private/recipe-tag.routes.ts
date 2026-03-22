@@ -1,5 +1,10 @@
 import { Elysia, t } from "elysia";
 import { t as translate } from "../../plugins/i18n";
+<<<<<<< HEAD
+=======
+import { HttpStatus } from "../../types";
+import { clerkPlugin } from "elysia-clerk";
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
 import {
     createRecipeTag,
     deleteRecipeTag,
@@ -10,7 +15,25 @@ const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
 export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
+<<<<<<< HEAD
     
+=======
+    .use(clerkPlugin())
+    .onBeforeHandle(({ auth, set, request }) => {
+        const { userId } = auth();
+        if (!userId) {
+            set.status = HttpStatus.UNAUTHORIZED;
+            return {
+                success: false,
+                message: translate("errors.unauthorized", locale(request))
+            };
+        }
+    })
+    .resolve(({ auth }) => {
+        const { userId } = auth();
+        return { userId: userId as string };
+    })
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     // Tạo mới recipe tag (POST)
     .post("/", async ({ body, set, request }) => {
         try {
@@ -27,6 +50,7 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Number(),
             tagId: t.Number(),
         }),
+        detail: { tags: ["Private"], summary: "Create new tag in recipe" }
     })
 
     // Cập nhật recipe tag (PUT)
@@ -59,6 +83,7 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Optional(t.Number()),
             tagId: t.Optional(t.Number()),
         }),
+        detail: { tags: ["Private"], summary: "Update tag in recipe" }
     })
 
     // Xóa recipe tag (DELETE)
@@ -79,4 +104,8 @@ export const privateRecipeTagRoutes = new Elysia({ prefix: "v1/recipe-tags" })
             recipeId: t.Numeric(),
             tagId: t.Numeric(),
         }),
+<<<<<<< HEAD
+=======
+        detail: { tags: ["Private"], summary: "Delete tag in recipe" }
+>>>>>>> bd454b0064926beb13d19aaaf7085d867990532c
     });

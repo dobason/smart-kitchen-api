@@ -7,23 +7,23 @@ const prisma = new PrismaClient({ adapter });
 
 // ─── Users ──────────────────────────────────────────────
 const sampleUsers = [
-  { id: 1, email: 'hoangminh@gmail.com', username: 'hoangminh', avartarUrl: null },
-  { id: 2, email: 'thuylinh@gmail.com', username: 'thuylinh', avartarUrl: 'https://i.pravatar.cc/150?u=thuylinh' },
-  { id: 3, email: 'ducbao@gmail.com', username: 'ducbao', avartarUrl: null },
+  { userId: "1", email: 'hoangminh@gmail.com', username: 'hoangminh', avartarUrl: null },
+  { userId: "2", email: 'thuylinh@gmail.com', username: 'thuylinh', avartarUrl: 'https://i.pravatar.cc/150?u=thuylinh' },
+  { userId: "3", email: 'ducbao@gmail.com', username: 'ducbao', avartarUrl: null },
 ];
 
 // ─── Cookbooks ──────────────────────────────────────────
 const sampleCookbooks = [
-  { id: 1, userId: 1, name: 'Bữa sáng 15 phút' },
-  { id: 2, userId: 1, name: 'Eat Clean căn bản' },
-  { id: 3, userId: 1, name: 'Sổ tay làm bánh & Eggdrop Sandwich' },
-  { id: 4, userId: 1, name: 'Thực đơn tăng cơ giảm mỡ cho dân tập tạ' },
-  { id: 5, userId: 2, name: 'Món chay thanh đạm' },
-  { id: 6, userId: 2, name: 'Món nhậu cuối tuần' },
-  { id: 7, userId: 2, name: 'Cơm nhà mẹ nấu' },
-  { id: 8, userId: 3, name: 'Đồ uống giải nhiệt mùa hè' },
-  { id: 9, userId: 3, name: 'Bí kíp nấu ăn bằng nồi chiên không dầu' },
-  { id: 10, userId: 3, name: 'Công thức nước xốt đa năng' },
+  { id: 1, userId: "1", name: 'Bữa sáng 15 phút' },
+  { id: 2, userId: "1", name: 'Eat Clean căn bản' },
+  { id: 3, userId: "1", name: 'Sổ tay làm bánh & Eggdrop Sandwich' },
+  { id: 4, userId: "1", name: 'Thực đơn tăng cơ giảm mỡ cho dân tập tạ' },
+  { id: 5, userId: "2", name: 'Món chay thanh đạm' },
+  { id: 6, userId: "2", name: 'Món nhậu cuối tuần' },
+  { id: 7, userId: "2", name: 'Cơm nhà mẹ nấu' },
+  { id: 8, userId: "3", name: 'Đồ uống giải nhiệt mùa hè' },
+  { id: 9, userId: "3", name: 'Bí kíp nấu ăn bằng nồi chiên không dầu' },
+  { id: 10, userId: "3", name: 'Công thức nước xốt đa năng' },
 ];
 
 // ─── Tags ───────────────────────────────────────────────
@@ -71,67 +71,67 @@ const sampleIngredients = [
 
 // ─── Recipes ────────────────────────────────────────────
 const sampleRecipes: Array<{
-  id: number; userId: number; recipesName: string; description: string | null;
+  id: number; userId: string; recipesName: string; description: string | null;
   imageRecipe: string | null; totalTime: number | null; calories: number | null;
   protein: number | null; carbs: number | null; fats: number | null;
   sourceType: 'MANUAL' | 'IMPORTED' | 'AI_GENERATED' | null; numberOfServes: number | null;
 }> = [
     {
-      id: 1, userId: 1, recipesName: 'Bánh mì trứng ốp la',
+      id: 1, userId: "1", recipesName: 'Bánh mì trứng ốp la',
       description: 'Món ăn sáng cực nhanh với bánh mì giòn và trứng ốp la vàng ươm.',
       imageRecipe: null, totalTime: 10, calories: 350, protein: 15, carbs: 40, fats: 14,
       sourceType: 'MANUAL', numberOfServes: 1,
     },
     {
-      id: 2, userId: 1, recipesName: 'Overnight Oats chuối bơ đậu phộng',
+      id: 2, userId: "1", recipesName: 'Overnight Oats chuối bơ đậu phộng',
       description: 'Yến mạch ngâm qua đêm với chuối, bơ đậu phộng — bữa sáng healthy không cần nấu.',
       imageRecipe: null, totalTime: 5, calories: 420, protein: 14, carbs: 55, fats: 16,
       sourceType: 'MANUAL', numberOfServes: 1,
     },
     {
-      id: 3, userId: 1, recipesName: 'Salad ức gà Eat Clean',
+      id: 3, userId: "1", recipesName: 'Salad ức gà Eat Clean',
       description: 'Salad ức gà luộc với rau xà lách, cà chua bi và sốt dầu giấm.',
       imageRecipe: null, totalTime: 20, calories: 280, protein: 35, carbs: 10, fats: 12,
       sourceType: 'MANUAL', numberOfServes: 2,
     },
     {
-      id: 4, userId: 1, recipesName: 'Cơm gà teriyaki',
+      id: 4, userId: "1", recipesName: 'Cơm gà teriyaki',
       description: 'Cơm trắng ăn kèm ức gà áp chảo sốt teriyaki kiểu Nhật.',
       imageRecipe: null, totalTime: 30, calories: 520, protein: 38, carbs: 55, fats: 12,
       sourceType: 'MANUAL', numberOfServes: 2,
     },
     {
-      id: 5, userId: 2, recipesName: 'Canh rau củ chay',
+      id: 5, userId: "2", recipesName: 'Canh rau củ chay',
       description: 'Canh rau củ thanh mát, bổ dưỡng cho bữa cơm gia đình.',
       imageRecipe: null, totalTime: 25, calories: 120, protein: 4, carbs: 18, fats: 3,
       sourceType: 'MANUAL', numberOfServes: 4,
     },
     {
-      id: 6, userId: 2, recipesName: 'Gỏi cuốn tôm thịt',
+      id: 6, userId: "2", recipesName: 'Gỏi cuốn tôm thịt',
       description: 'Gỏi cuốn tươi mát với tôm, thịt heo, bún và rau sống.',
       imageRecipe: null, totalTime: 30, calories: 200, protein: 18, carbs: 22, fats: 5,
       sourceType: 'MANUAL', numberOfServes: 4,
     },
     {
-      id: 7, userId: 2, recipesName: 'Cánh gà chiên nước mắm',
+      id: 7, userId: "2", recipesName: 'Cánh gà chiên nước mắm',
       description: 'Cánh gà chiên giòn rim nước mắm tỏi ớt — món nhậu số 1.',
       imageRecipe: null, totalTime: 40, calories: 480, protein: 30, carbs: 15, fats: 32,
       sourceType: 'MANUAL', numberOfServes: 3,
     },
     {
-      id: 8, userId: 3, recipesName: 'Trà đào cam sả',
+      id: 8, userId: "3", recipesName: 'Trà đào cam sả',
       description: 'Thức uống mát lạnh, thanh nhiệt mùa hè với đào, cam và sả.',
       imageRecipe: null, totalTime: 15, calories: 90, protein: 0, carbs: 22, fats: 0,
       sourceType: 'MANUAL', numberOfServes: 2,
     },
     {
-      id: 9, userId: 3, recipesName: 'Khoai lang nướng nồi chiên không dầu',
+      id: 9, userId: "3", recipesName: 'Khoai lang nướng nồi chiên không dầu',
       description: 'Khoai lang nướng dẻo ngọt tự nhiên, chỉ cần nồi chiên không dầu.',
       imageRecipe: null, totalTime: 25, calories: 160, protein: 2, carbs: 37, fats: 0.2,
       sourceType: 'MANUAL', numberOfServes: 2,
     },
     {
-      id: 10, userId: 3, recipesName: 'Sốt me chua ngọt',
+      id: 10, userId: "3", recipesName: 'Sốt me chua ngọt',
       description: 'Nước xốt me chua ngọt dùng chấm hải sản, gỏi cuốn cực hợp.',
       imageRecipe: null, totalTime: 10, calories: 60, protein: 0.5, carbs: 14, fats: 0.3,
       sourceType: 'MANUAL', numberOfServes: 4,
@@ -265,7 +265,7 @@ const seed = async () => {
   console.log('🌱 Seeding users...');
   for (const user of sampleUsers) {
     await prisma.user.upsert({
-      where: { id: user.id },
+      where: { userId: user.userId },
       update: user,
       create: user,
     });
