@@ -6,7 +6,7 @@
     "dev": "bun run --watch src/index.ts",
     "seed": "bunx prisma generate && bunx prisma db seed",
     "generate": "bunx prisma generate",
-    "start": "bun run src/server.ts"
+    "start": "bun run src/index.ts"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"
@@ -26,5 +26,5 @@
     "prisma": "^7.4.2"
   },
   "module": "src/index.ts",
-  "main": "src/server.ts"
+  "main": "src/index.ts"
 }
