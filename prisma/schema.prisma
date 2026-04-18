@@ -37,7 +37,7 @@ model User {
 model Recipe {
   id       Int           @id @default(autoincrement()) @map("recipe_id")
   userId         String           @map("user_id")
-  recipesName    String           @map("recipes_name")
+  name           String           @map("recipes_name")
   description    String?          @db.Text
   imageRecipe    String?          @map("image_recipe")
   totalTime      Int?             @map("total_time")

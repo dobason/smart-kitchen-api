@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from '@elysiajs/cors'
 
 // --- 1. IMPORT CÁC FILE PUBLIC (KHÔNG CẦN ĐĂNG NHẬP) ---
 import { publicIngredientRoutes } from "./public/ingredient.routes";
@@ -31,25 +32,7 @@ const publicRoutes = new Elysia()
     .use(publicTagRoutes)
     .use(publicUserRoutes);
 
-// --- 4. GOM NHÓM PRIVATE ---
-import { clerkPlugin } from "elysia-clerk";
-
 const privateRoutes = new Elysia()
-    .use(clerkPlugin())
-    .derive(({ store }) => {
-        // elysia-clerk places auth on the store object
-        return {
-            auth: (store as any).auth
-        };
-    })
-    .onBeforeHandle(({ auth, set }) => {
-        if (!auth?.userId) {
-            set.status = 401;
-            return {
-                message: "Unauthorized - Authentication required",
-            };
-        }
-    })
     .use(cookbookRoutes)
     .use(cookbookRecipeRoutes)
     .use(userRoutes)
@@ -63,5 +46,6 @@ const privateRoutes = new Elysia()
 
 // --- 5. XUẤT RA API TỔNG HỢP ---
 export const apiRoutes = new Elysia({ prefix: "" })
+    .use(cors())
     .use(publicRoutes)
     .use(privateRoutes);

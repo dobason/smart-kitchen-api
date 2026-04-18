@@ -35,13 +35,13 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     .post("/", async ({ body, set, request }) => {
         try {
             const data = body as {
-                userId: string; recipesName: string; description?: string;
+                userId: string; name: string; description?: string;
                 imageRecipe?: string; totalTime?: number; calories?: number;
                 protein?: number; carbs?: number; fats?: number;
                 sourceType?: "MANUAL" | "IMPORTED" | "AI_GENERATED"; numberOfServes?: number;
             };
 
-            if (!data.recipesName.trim()) {
+            if (!data.name.trim()) {
                 set.status = 400;
                 return { success: false, message: translate("errors.recipe.name_required", locale(request)) };
             }
@@ -55,7 +55,7 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         body: t.Object({
-            userId: t.String(), recipesName: t.String(), description: t.Optional(t.String()),
+            userId: t.String(), name: t.String(), description: t.Optional(t.String()),
             imageRecipe: t.Optional(t.String()), totalTime: t.Optional(t.Number()),
             calories: t.Optional(t.Number()), protein: t.Optional(t.Number()),
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
@@ -68,13 +68,13 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     .put("/:id", async ({ params: { id }, body, set, request }) => {
         try {
             const data = body as {
-                userId?: string; recipesName?: string; description?: string;
+                userId?: string; name?: string; description?: string;
                 imageRecipe?: string; totalTime?: number; calories?: number;
                 protein?: number; carbs?: number; fats?: number;
                 sourceType?: "MANUAL" | "IMPORTED" | "AI_GENERATED"; numberOfServes?: number;
             };
 
-            if (data.recipesName !== undefined && !data.recipesName.trim()) {
+            if (data.name !== undefined && !data.name.trim()) {
                 set.status = 400;
                 return { success: false, message: translate("errors.recipe.name_required", locale(request)) };
             }
@@ -98,7 +98,7 @@ export const privateRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     }, {
         params: t.Object({ id: t.Numeric() }),
         body: t.Object({
-            userId: t.Optional(t.String()), recipesName: t.Optional(t.String()), description: t.Optional(t.String()),
+            userId: t.Optional(t.String()), name: t.Optional(t.String()), description: t.Optional(t.String()),
             imageRecipe: t.Optional(t.String()), totalTime: t.Optional(t.Number()),
             calories: t.Optional(t.Number()), protein: t.Optional(t.Number()),
             carbs: t.Optional(t.Number()), fats: t.Optional(t.Number()),
