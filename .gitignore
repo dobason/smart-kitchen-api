@@ -30,6 +30,8 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .env
+.pgdata/
+.pglite/
 
 # vercel
 .vercel
@@ -43,3 +45,6 @@ package-lock.json
 **/*.bun
 /src/generated/prisma
 ts_error.txt
+
+# AI generated code
+.claude

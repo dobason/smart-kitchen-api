@@ -1,0 +1,83 @@
+{
+  "success": {
+    "created": "Tạo thành công",
+    "updated": "Cập nhật thành công",
+    "deleted": "Xóa thành công"
+  },
+  "errors": {
+    "system": "Lỗi hệ thống",
+    "unauthorized": "Không có quyền truy cập",
+    "no_fields_to_update": "Không có trường nào để cập nhật",
+    "user": {
+      "fetch": "Lỗi khi lấy danh sách người dùng",
+      "not_found": "Không tìm thấy người dùng",
+      "not_found_update": "Không tìm thấy người dùng để cập nhật",
+      "not_found_delete": "Không tìm thấy người dùng để xóa",
+      "required_fields": "email và username là bắt buộc",
+      "email_required": "Email không được để trống",
+      "username_required": "Username không được để trống",
+      "create_failed": "Lỗi khi tạo người dùng"
+    },
+    "cookbook": {
+      "fetch": "Lỗi khi lấy danh sách công thức",
+      "not_found": "Không tìm thấy công thức",
+      "not_found_update": "Không tìm thấy công thức để cập nhật",
+      "not_found_delete": "Không tìm thấy công thức để xóa",
+      "name_required": "Tên công thức không được để trống",
+      "create_failed": "Lỗi khi tạo công thức"
+    },
+    "recipe": {
+      "fetch": "Lỗi khi lấy danh sách công thức nấu ăn",
+      "not_found": "Không tìm thấy công thức nấu ăn",
+      "not_found_update": "Không tìm thấy công thức nấu ăn để cập nhật",
+      "not_found_delete": "Không tìm thấy công thức nấu ăn để xóa",
+      "name_required": "Tên công thức nấu ăn không được để trống",
+      "create_failed": "Lỗi khi tạo công thức nấu ăn"
+    },
+    "step": {
+      "fetch": "Lỗi khi lấy danh sách bước nấu",
+      "not_found": "Không tìm thấy bước nấu",
+      "not_found_update": "Không tìm thấy bước nấu để cập nhật",
+      "not_found_delete": "Không tìm thấy bước nấu để xóa",
+      "instruction_required": "Nội dung bước nấu không được để trống",
+      "create_failed": "Lỗi khi tạo bước nấu"
+    },
+    "ingredient": {
+      "fetch": "Lỗi khi lấy danh sách nguyên liệu",
+      "not_found": "Không tìm thấy nguyên liệu",
+      "not_found_update": "Không tìm thấy nguyên liệu để cập nhật",
+      "not_found_delete": "Không tìm thấy nguyên liệu để xóa",
+      "name_required": "Tên nguyên liệu không được để trống",
+      "create_failed": "Lỗi khi tạo nguyên liệu"
+    },
+    "tag": {
+      "fetch": "Lỗi khi lấy danh sách tag",
+      "not_found": "Không tìm thấy tag",
+      "not_found_update": "Không tìm thấy tag để cập nhật",
+      "not_found_delete": "Không tìm thấy tag để xóa",
+      "name_required": "Tên tag không được để trống",
+      "create_failed": "Lỗi khi tạo tag"
+    },
+    "cookbook_recipe": {
+      "fetch": "Lỗi khi lấy danh sách cookbook recipe",
+      "not_found": "Không tìm thấy cookbook recipe",
+      "not_found_update": "Không tìm thấy cookbook recipe để cập nhật",
+      "not_found_delete": "Không tìm thấy cookbook recipe để xóa",
+      "create_failed": "Lỗi khi tạo cookbook recipe"
+    },
+    "recipe_tag": {
+      "fetch": "Lỗi khi lấy danh sách recipe tag",
+      "not_found": "Không tìm thấy recipe tag",
+      "not_found_update": "Không tìm thấy recipe tag để cập nhật",
+      "not_found_delete": "Không tìm thấy recipe tag để xóa",
+      "create_failed": "Lỗi khi tạo recipe tag"
+    },
+    "recipe_ingredient": {
+      "fetch": "Lỗi khi lấy danh sách recipe ingredient",
+      "not_found": "Không tìm thấy recipe ingredient",
+      "not_found_update": "Không tìm thấy recipe ingredient để cập nhật",
+      "not_found_delete": "Không tìm thấy recipe ingredient để xóa",
+      "create_failed": "Lỗi khi tạo recipe ingredient"
+    }
+  }
+}

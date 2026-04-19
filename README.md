@@ -61,7 +61,7 @@ Prisma giúp thao tác với PostgreSQL an toàn và chặt chẽ hơn qua TypeS
   bunx prisma init
   ```
  * **Cấu hình Database:**
- * 1.Mở file .env vừa được sinh ra, cập nhật biến DATABASE_URL trỏ tới chuỗi kết nối PostgreSQL của bạn.
+ * 1. Tạo file `.env` bằng cách copy từ `.env.example`, sau đó cập nhật biến DATABASE_URL trỏ tới chuỗi kết nối PostgreSQL của bạn.
  * 2.Đồng bộ cấu trúc dữ liệu lên database:
    ```bash
    bunx prisma db push
@@ -72,3 +72,21 @@ Prisma giúp thao tác với PostgreSQL an toàn và chặt chẽ hơn qua TypeS
    bun run dev
   ```
 Server ElysiaJS sẽ được khởi động và sẵn sàng xử lý các request từ ứng dụng React Native!
+
+## Test nhanh API
+
+- Swagger: mở `http://localhost:3000/swagger` sau khi chạy server.
+- Các endpoint list đã hỗ trợ filter theo khóa ngoại bằng query string.
+
+Ví dụ filter nhanh:
+
+- `GET /v1/cookbooks?userId=1`
+- `GET /v1/recipes?userId=1`
+- `GET /v1/recipes?sourceType=MANUAL`
+- `GET /v1/steps?recipeId=1`
+- `GET /v1/cookbook-recipes?cookbookId=1`
+- `GET /v1/cookbook-recipes?recipeId=1`
+- `GET /v1/recipe-tags?recipeId=1`
+- `GET /v1/recipe-tags?tagId=1`
+- `GET /v1/recipe-ingredients?recipeId=1`
+- `GET /v1/recipe-ingredients?ingredientId=1`

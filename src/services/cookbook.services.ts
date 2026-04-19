@@ -1,52 +1,59 @@
-import { Prisma } from "@prisma/client";
 import prisma from "../db";
+import { rethrowIfNotFound } from "./service.helpers";
 
-// Hàm lấy tất cả công thức
-export const getAllCookbooks = async () => {
+export type CreateCookbookInput = {
+    name: string;
+    userId: string;
+};
+
+export type UpdateCookbookInput = Partial<CreateCookbookInput>;
+export type CookbookFilter = {
+    userId?: string;
+};
+
+// Hàm lấy tất cả cookbook, có thể lọc theo userId
+export const getAllCookbooks = async (filters: CookbookFilter = {}) => {
     return await prisma.cookbook.findMany({
+        where: {
+            userId: filters.userId,
+        },
         orderBy: { createdAt: "desc" },
     });
 };
 
-// Hàm lấy 1 công thức theo ID
+// Hàm lấy chi tiết cookbook theo ID
 export const getCookbookById = async (id: number) => {
     return await prisma.cookbook.findUnique({
         where: { id },
     });
 };
 
-// Hàm tạo công thức mới
-export const createCookbook = async (data: Prisma.CookbookUncheckedCreateInput) => {
+// Hàm tạo cookbook mới
+export const createCookbook = async (data: CreateCookbookInput) => {
     return await prisma.cookbook.create({
         data,
     });
 };
 
-// Hàm cập nhật công thức
-export const updateCookbook = async (id: number, data: Prisma.CookbookUncheckedUpdateInput) => {
+// Hàm cập nhật cookbook
+export const updateCookbook = async (id: number, data: UpdateCookbookInput) => {
     try {
         return await prisma.cookbook.update({
             where: { id },
             data,
         });
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            throw Object.assign(new Error('Cookbook not found'), { code: 'P2025' });
-        }
-        throw error;
+        rethrowIfNotFound(error, "Cookbook");
     }
 };
 
-// Hàm xóa công thức
+// Hàm xóa cookbook
 export const deleteCookbook = async (id: number) => {
     try {
         return await prisma.cookbook.delete({
             where: { id },
         });
     } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            throw Object.assign(new Error('Cookbook not found'), { code: 'P2025' });
-        }
-        throw error;
+        rethrowIfNotFound(error, "Cookbook");
     }
 };
