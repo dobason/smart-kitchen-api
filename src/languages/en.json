@@ -6,6 +6,7 @@
   },
   "errors": {
     "system": "Internal server error",
+    "unauthorized": "Authentication required",
     "no_fields_to_update": "No fields to update",
     "user": {
       "fetch": "Failed to fetch users",

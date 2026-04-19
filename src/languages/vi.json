@@ -6,6 +6,7 @@
   },
   "errors": {
     "system": "Lỗi hệ thống",
+    "unauthorized": "Không có quyền truy cập",
     "no_fields_to_update": "Không có trường nào để cập nhật",
     "user": {
       "fetch": "Lỗi khi lấy danh sách người dùng",
