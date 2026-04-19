@@ -5,7 +5,7 @@ export type SourceTypeValue = "MANUAL" | "IMPORTED" | "AI_GENERATED";
 
 export type CreateRecipeInput = {
     userId: string;
-    recipesName: string;
+    name: string;
     description?: string;
     imageRecipe?: string;
     totalTime?: number;

@@ -3,6 +3,7 @@ import { swagger } from "@elysiajs/swagger";
 import { i18n } from "./plugins/i18n";
 import { apiRoutes } from "./routes";
 const port = Number(process.env.PORT) || 3000;
+const hostname = process.env.APP_HOST || 'localhost'; 
 
 const app = new Elysia()
   .use(swagger({
@@ -16,7 +17,7 @@ const app = new Elysia()
   }))
   .use(i18n())
   .use(apiRoutes)
-  .listen(port);
+  .listen({ port, hostname });
 
 console.log(`🦊 SmartKitchen API is running at http://${app.server?.hostname}:${app.server?.port}`);
 console.log(`📚 Experience Testing API at http://${app.server?.hostname}:${app.server?.port}/swagger`);
