@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { i18n } from "./plugins/i18n";
 import { apiRoutes } from "./routes";
+import { databaseTarget } from "./db";
 const port = Number(process.env.PORT) || 3000;
 const hostname = process.env.HOSTNAME || 'localhost'; 
 
@@ -21,3 +22,4 @@ const app = new Elysia()
 
 console.log(`🦊 SmartKitchen API is running at http://${app.server?.hostname}:${app.server?.port}`);
 console.log(`📚 Experience Testing API at http://${app.server?.hostname}:${app.server?.port}/swagger`);
+console.log(`🗄️ Connected database: ${databaseTarget}`);

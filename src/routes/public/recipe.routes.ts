@@ -9,6 +9,10 @@ const sourceTypeSchema = t.Optional(
     t.Union([ t.Literal("MANUAL"), t.Literal("IMPORTED"), t.Literal("AI_GENERATED") ]),
 );
 
+const sourceTypeQuerySchema = t.Optional(
+    t.Union([ t.Literal("MANUAL"), t.Literal("IMPORTED"), t.Literal("AI_GENERATED"), t.Literal("") ]),
+);
+
 const locale = (req: Request) =>
     req.headers.get("accept-language")?.split(",")[0]?.split("-")[0] ?? "vi";
 
@@ -17,9 +21,12 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     // Lấy tất cả recipes (GET)
     .get("/", async ({ query, set, request }) => {
         try {
+            const normalizedUserId = query.userId?.trim() ? query.userId : undefined;
+            const normalizedSourceType = query.sourceType === "" ? undefined : query.sourceType;
+
             const recipes = await getAllRecipes({
-                userId: query.userId,
-                sourceType: query.sourceType,
+                userId: normalizedUserId,
+                sourceType: normalizedSourceType,
             });
             return { success: true, data: recipes };
         } catch (error) {
@@ -29,7 +36,7 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     }, {
         query: t.Object({
             userId: t.Optional(t.String()),
-            sourceType: sourceTypeSchema,
+            sourceType: sourceTypeQuerySchema,
         }),
         detail: { tags: ["Public"], summary: "Get all recipes" }
     })

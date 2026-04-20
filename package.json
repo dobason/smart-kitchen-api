@@ -3,10 +3,12 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
+    "db:pull": "bunx prisma db pull",
+    "db:sync": "bun run db:pull && bun run generate",
+    "dev": "bun run db:sync && bun run --watch src/index.ts",
     "seed": "bunx prisma generate && bunx prisma db seed",
     "generate": "bunx prisma generate",
-    "start": "bun run src/index.ts"
+    "start": "bun run db:sync && bun run src/index.ts"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
