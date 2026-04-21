@@ -19,7 +19,7 @@ export const getAllCookbookRecipes = async (filters: CookbookRecipeFilter = {}) 
             recipeId: filters.recipeId,
             cookbookId: filters.cookbookId,
         },
-        include: {recipe: true},
+        include: { recipe: true },
         orderBy: [{ cookbookId: "asc" }, { recipeId: "asc" }],
     });
 };
@@ -36,10 +36,17 @@ export const getCookbookRecipeById = async (recipeId: number, cookbookId: number
     });
 };
 
-// Hàm tạo liên kết cookbook và recipe
+// Hàm tạo liên kết cookbook và recipe (upsert để tránh lỗi duplicate)
 export const createCookbookRecipe = async (data: CreateCookbookRecipeInput) => {
-    return await prisma.cookbookRecipe.create({
-        data,
+    return await prisma.cookbookRecipe.upsert({
+        where: {
+            recipeId_cookbookId: {
+                recipeId: data.recipeId,
+                cookbookId: data.cookbookId,
+            },
+        },
+        update: {}, // already exists — do nothing
+        create: data,
     });
 };
 

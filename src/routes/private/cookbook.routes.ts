@@ -133,3 +133,5 @@ export const cookbookRoutes = new Elysia({ prefix: "v1/cookbooks" })
         params: t.Object({ id: t.Numeric() }),
         detail: { tags: ["Private"], summary: "Delete cookbook" }
     });
+
+    

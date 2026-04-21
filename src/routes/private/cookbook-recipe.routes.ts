@@ -123,22 +123,18 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // Xóa cookbook recipe (DELETE)
-    .delete("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
+    .delete("/:cookbookId/:recipeId", async ({ params: { cookbookId, recipeId }, set, request }) => {
         try {
             await deleteCookbookRecipe(recipeId, cookbookId);
-            return { success: true, message: translate("success.deleted", locale(request)) };
+            return { success: true, message: "Deleted" };
         } catch (error: any) {
-            if (error?.code === "P2025") {
+            if (error?.code === 'P2025') {
                 set.status = 404;
-                return { success: false, message: translate("errors.cookbook_recipe.not_found_delete", locale(request)) };
+                return { success: false, message: "Not found" };
             }
             set.status = 500;
-            return { success: false, message: translate("errors.system", locale(request)) };
+            return { success: false, message: "Error" };
         }
     }, {
-        params: t.Object({
-            recipeId: t.Numeric(),
-            cookbookId: t.Numeric(),
-        }),
-        detail: { tags: ["Private"], summary: "Delete recipe in cookbook" }
-    });
+        params: t.Object({ cookbookId: t.Numeric(), recipeId: t.Numeric() }),
+    })
