@@ -19,6 +19,7 @@ export const getAllCookbookRecipes = async (filters: CookbookRecipeFilter = {}) 
             recipeId: filters.recipeId,
             cookbookId: filters.cookbookId,
         },
+        include: {recipe: true},
         orderBy: [{ cookbookId: "asc" }, { recipeId: "asc" }],
     });
 };
