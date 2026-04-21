@@ -105,6 +105,7 @@ model Tag {
   id        Int      @id @default(autoincrement()) @map("tag_id")
   name      String
   category  String?
+  emoji     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -128,6 +129,7 @@ model Ingredient {
   id        Int      @id @default(autoincrement()) @map("ingredient_id")
   name      String
   icon      String?
+  bgColor   String?  @default("#F5F5F5") @map("bg_color")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

@@ -8,18 +8,32 @@ export type CreateIngredientInput = {
 
 export type UpdateIngredientInput = Partial<CreateIngredientInput>;
 
+/**
+ * Hàm chuyển đổi từ model database sang format frontend mong đợi.
+ */
+const mapIngredientToResponse = (ingredient: any) => {
+    return {
+        ...ingredient,
+        id: String(ingredient.id),
+        emoji: ingredient.icon,
+    };
+};
+
 // Hàm lấy tất cả nguyên liệu
 export const getAllIngredients = async () => {
-    return await prisma.ingredient.findMany({
+    const ingredients = await prisma.ingredient.findMany({
         orderBy: { createdAt: "desc" },
     });
+    return ingredients.map(mapIngredientToResponse);
 };
 
 // Hàm lấy chi tiết nguyên liệu theo ID
 export const getIngredientById = async (id: number) => {
-    return await prisma.ingredient.findUnique({
+    const ingredient = await prisma.ingredient.findUnique({
         where: { id },
     });
+    if (!ingredient) return null;
+    return mapIngredientToResponse(ingredient);
 };
 
 // Hàm tạo nguyên liệu mới
