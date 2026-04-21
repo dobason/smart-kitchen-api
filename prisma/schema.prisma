@@ -110,7 +110,7 @@ model Ingredient {
   icon              String?
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
-  bg_color          String?            @default("#F5F5F5")
+  bgColor           String?            @default("#F5F5F5") @map("bg_color")
   recipeIngredients RecipeIngredient[]
 
   @@map("ingredients")
