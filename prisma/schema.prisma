@@ -88,6 +88,7 @@ model Tag {
   category   String?
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
+  emoji      String?
   recipeTags RecipeTag[]
 
   @@map("tags")
@@ -109,6 +110,7 @@ model Ingredient {
   icon              String?
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
+  bg_color          String?            @default("#F5F5F5")
   recipeIngredients RecipeIngredient[]
 
   @@map("ingredients")
