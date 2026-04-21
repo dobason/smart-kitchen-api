@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma";
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const connectionString = process.env.DATABASE_URL!;
@@ -597,11 +597,12 @@ const seed = async () => {
   }
 
   console.log('🍳 Seeding recipes...');
-  for (const recipe of sampleRecipes) {
+  for (const { name, ...recipeData } of sampleRecipes) {
+    const formattedRecipe = { ...recipeData, recipesName: name };
     await prisma.recipe.upsert({
-      where: { id: recipe.id },
-      update: recipe,
-      create: recipe,
+      where: { id: formattedRecipe.id },
+      update: formattedRecipe,
+      create: formattedRecipe,
     });
   }
 
