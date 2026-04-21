@@ -17,6 +17,9 @@ export const getAllCookbooks = async (filters: CookbookFilter = {}) => {
         where: {
             userId: filters.userId,
         },
+        include: {
+            cookbookRecipes: { include: { recipe: true } }
+        },
         orderBy: { createdAt: "desc" },
     });
 };
