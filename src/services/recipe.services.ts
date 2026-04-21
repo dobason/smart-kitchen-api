@@ -3,6 +3,42 @@ import { rethrowIfNotFound } from "./service.helpers";
 
 export type SourceTypeValue = "MANUAL" | "IMPORTED" | "AI_GENERATED";
 
+/**
+ * Hàm chuyển đổi từ model database sang format frontend mong đợi.
+ */
+const mapRecipeToResponse = (recipe: any) => {
+    const { recipeTags = [], recipeIngredients = [], ...rest } = recipe;
+
+    // Phân loại tags và cookware từ recipeTags
+    const tags = recipeTags
+        .filter((rt: any) => rt.tag.category !== 'Cookware')
+        .map((rt: any) => rt.tag.name);
+
+    const cookware = recipeTags
+        .filter((rt: any) => rt.tag.category === 'Cookware')
+        .map((rt: any) => rt.tag.name);
+
+    // Chuẩn hóa recipeIngredients: id thành string, icon → emoji
+    const normalizedIngredients = recipeIngredients.map((rI: any) => ({
+        ...rI,
+        ingredient: {
+            ...rI.ingredient,
+            id: String(rI.ingredient.id),
+            emoji: rI.ingredient.icon,
+        },
+    }));
+
+    return {
+        ...rest,
+        id: String(recipe.id),
+        imageUrl: recipe.imageRecipe,
+        timeMinutes: recipe.totalTime,
+        tags,
+        cookware,
+        recipeIngredients: normalizedIngredients,
+    };
+};
+
 export type CreateRecipeInput = {
     userId: string;
     name: string;
@@ -25,20 +61,47 @@ export type RecipeFilter = {
 
 // Hàm lấy tất cả recipe, có thể lọc theo userId và sourceType
 export const getAllRecipes = async (filters: RecipeFilter = {}) => {
-    return await prisma.recipe.findMany({
+    const recipes = await prisma.recipe.findMany({
         where: {
             userId: filters.userId,
             sourceType: filters.sourceType,
         },
+        include: {
+            recipeTags: {
+                include: {
+                    tag: true
+                }
+            }
+        },
         orderBy: { createdAt: "desc" },
     });
+
+    return recipes.map(mapRecipeToResponse);
 };
 
 // Hàm lấy chi tiết recipe theo ID
 export const getRecipeById = async (id: number) => {
-    return await prisma.recipe.findUnique({
+    const recipe = await prisma.recipe.findUnique({
         where: { id },
+        include: {
+            recipeTags: {
+                include: {
+                    tag: true
+                }
+            },
+            steps: {
+                orderBy: { stepNumber: 'asc' }
+            },
+            recipeIngredients: {
+                include: {
+                    ingredient: true
+                }
+            }
+        },
     });
+
+    if (!recipe) return null;
+    return mapRecipeToResponse(recipe);
 };
 
 // Hàm tạo recipe mới

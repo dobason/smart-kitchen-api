@@ -3,7 +3,7 @@ import { swagger } from "@elysiajs/swagger";
 import { i18n } from "./plugins/i18n";
 import { apiRoutes } from "./routes";
 const port = Number(process.env.PORT) || 3000;
-const hostname = process.env.APP_HOST || 'localhost'; 
+const hostname = process.env.APP_HOST || 'localhost';
 
 const app = new Elysia()
   .use(swagger({
