@@ -7,7 +7,7 @@ export type SourceTypeValue = "MANUAL" | "IMPORTED" | "AI_GENERATED";
  * Hàm chuyển đổi từ model database sang format frontend mong đợi.
  */
 const mapRecipeToResponse = (recipe: any) => {
-    const { recipeTags = [], ...rest } = recipe;
+    const { recipeTags = [], recipeIngredients = [], ...rest } = recipe;
 
     // Phân loại tags và cookware từ recipeTags
     const tags = recipeTags
@@ -18,6 +18,16 @@ const mapRecipeToResponse = (recipe: any) => {
         .filter((rt: any) => rt.tag.category === 'Cookware')
         .map((rt: any) => rt.tag.name);
 
+    // Chuẩn hóa recipeIngredients: id thành string, icon → emoji
+    const normalizedIngredients = recipeIngredients.map((rI: any) => ({
+        ...rI,
+        ingredient: {
+            ...rI.ingredient,
+            id: String(rI.ingredient.id),
+            emoji: rI.ingredient.icon,
+        },
+    }));
+
     return {
         ...rest,
         id: String(recipe.id),
@@ -25,6 +35,7 @@ const mapRecipeToResponse = (recipe: any) => {
         timeMinutes: recipe.totalTime,
         tags,
         cookware,
+        recipeIngredients: normalizedIngredients,
     };
 };
 

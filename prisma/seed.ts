@@ -488,68 +488,62 @@ const sampleCookbookRecipes = [
 
 // ─── Recipe ↔ Tag (junction) ────────────────────────────
 const sampleRecipeTags = [
-  { recipeId: 1, tagId: 1 },   // Bánh mì trứng → Bữa sáng
-  { recipeId: 1, tagId: 15 },  // Bánh mì trứng → Nhanh & Dễ
-  { recipeId: 2, tagId: 1 },   // Overnight Oats → Bữa sáng
-  { recipeId: 2, tagId: 5 },   // Overnight Oats → Eat Clean
-  { recipeId: 3, tagId: 2 },   // Salad ức gà → Bữa trưa
-  { recipeId: 3, tagId: 5 },   // Salad ức gà → Eat Clean
-  { recipeId: 3, tagId: 8 },   // Salad ức gà → Tăng cơ
-  { recipeId: 4, tagId: 3 },   // Cơm gà teriyaki → Bữa tối
-  { recipeId: 4, tagId: 11 },  // Cơm gà teriyaki → Món Nhật
-  { recipeId: 4, tagId: 8 },   // Cơm gà teriyaki → Tăng cơ
-  { recipeId: 5, tagId: 7 },   // Canh rau củ → Chay
-  { recipeId: 5, tagId: 9 },   // Canh rau củ → Món Việt
-  { recipeId: 6, tagId: 9 },   // Gỏi cuốn → Món Việt
-  { recipeId: 6, tagId: 15 },  // Gỏi cuốn → Nhanh & Dễ
-  { recipeId: 7, tagId: 9 },   // Cánh gà → Món Việt
-  { recipeId: 7, tagId: 4 },   // Cánh gà → Ăn vặt
-  { recipeId: 8, tagId: 12 },  // Trà đào → Đồ uống
-  { recipeId: 9, tagId: 14 },  // Khoai lang → Nồi chiên không dầu
-  { recipeId: 9, tagId: 6 },   // Khoai lang → Low Carb
-  { recipeId: 10, tagId: 13 }, // Sốt me → Nước xốt
+  { recipeId: 1, tagId: 8 },   // Bánh mì trứng → Breakfast (id:8)
+  { recipeId: 1, tagId: 36 },  // Bánh mì trứng → 15 mins (id:36)
+  { recipeId: 2, tagId: 8 },   // Overnight Oats → Breakfast (id:8)
+  { recipeId: 2, tagId: 15 },  // Overnight Oats → Vegetarian (id:15)
+  { recipeId: 3, tagId: 9 },   // Salad ức gà → Lunch (id:9)
+  { recipeId: 3, tagId: 15 },  // Salad ức gà → Vegetarian-style (id:15)
+  { recipeId: 3, tagId: 20 },  // Salad ức gà → High Protein (id:20)
+  { recipeId: 4, tagId: 10 },  // Cơm gà teriyaki → Dinner (id:10)
+  { recipeId: 4, tagId: 27 },  // Cơm gà teriyaki → Japanese (id:27)
+  { recipeId: 4, tagId: 20 },  // Cơm gà teriyaki → High Protein (id:20)
+  { recipeId: 5, tagId: 14 },  // Canh rau củ → Vegan (id:14)
+  { recipeId: 5, tagId: 31 },  // Canh rau củ → Savory (id:31)
+  { recipeId: 6, tagId: 31 },  // Gỏi cuốn → Savory (id:31)
+  { recipeId: 6, tagId: 36 },  // Gỏi cuốn → 15 mins (id:36)
+  { recipeId: 7, tagId: 11 },  // Cánh gà → Snack (id:11)
+  { recipeId: 7, tagId: 29 },  // Cánh gà → Spicy (id:29)
+  { recipeId: 8, tagId: 13 },  // Trà đào → Drink (id:13)
+  { recipeId: 9, tagId: 4 },   // Khoai lang → Air Fryer (id:4)
+  { recipeId: 9, tagId: 17 },  // Khoai lang → Low Carb (id:17)
+  { recipeId: 10, tagId: 31 }, // Sốt me → Savory (id:31)
 ];
 
 // ─── Recipe ↔ Ingredient (junction) ─────────────────────
 const sampleRecipeIngredients = [
-  // Bánh mì trứng (recipe 1)
-  { recipeId: 1, ingredientId: 1, quantity: 2, unit: 'quả', note: null },
-  { recipeId: 1, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
-  { recipeId: 1, ingredientId: 14, quantity: 0.25, unit: 'thìa cà phê', note: null },
+  // Bánh mì trứng ốp la (recipe 1) — cần Trứng, Bánh mì, Phô mai
+  { recipeId: 1, ingredientId: 2, quantity: 2, unit: 'quả', note: null },       // Trứng (id:2)
+  { recipeId: 1, ingredientId: 4, quantity: 2, unit: 'lát', note: null },       // Bánh mì (id:4)
+  { recipeId: 1, ingredientId: 5, quantity: 1, unit: 'lát', note: null },       // Phô mai (id:5)
 
-  // Overnight Oats (recipe 2)
-  { recipeId: 2, ingredientId: 16, quantity: 50, unit: 'g', note: null },
-  { recipeId: 2, ingredientId: 3, quantity: 100, unit: 'ml', note: 'Có thể thay bằng sữa hạnh nhân' },
-  { recipeId: 2, ingredientId: 17, quantity: 1, unit: 'quả', note: 'Cắt lát' },
+  // Overnight Oats (recipe 2) — cần Sữa tươi, Chuối, Hạt chia
+  { recipeId: 2, ingredientId: 3, quantity: 100, unit: 'ml', note: 'Có thể thay bằng sữa hạnh nhân' }, // Sữa tươi (id:3)
+  { recipeId: 2, ingredientId: 18, quantity: 1, unit: 'quả', note: 'Cắt lát' }, // Chuối (id:18)
+  { recipeId: 2, ingredientId: 44, quantity: 1, unit: 'thìa canh', note: null },// Hạt chia (id:44)
 
-  // Salad ức gà (recipe 3)
-  { recipeId: 3, ingredientId: 4, quantity: 200, unit: 'g', note: null },
-  { recipeId: 3, ingredientId: 6, quantity: 100, unit: 'g', note: null },
-  { recipeId: 3, ingredientId: 7, quantity: 5, unit: 'quả', note: 'Cà chua bi' },
-  { recipeId: 3, ingredientId: 10, quantity: 1, unit: 'thìa canh', note: 'Dùng cho sốt' },
-  { recipeId: 3, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
+  // Salad ức gà (recipe 3) — cần Thịt gà, Xà lách, Cà chua
+  { recipeId: 3, ingredientId: 1, quantity: 200, unit: 'g', note: null },       // Thịt gà (id:1)
+  { recipeId: 3, ingredientId: 11, quantity: 100, unit: 'g', note: null },      // Xà lách (id:11)
+  { recipeId: 3, ingredientId: 10, quantity: 5, unit: 'quả', note: 'Cà chua bi' }, // Cà chua (id:10)
 
-  // Cơm gà teriyaki (recipe 4)
-  { recipeId: 4, ingredientId: 4, quantity: 300, unit: 'g', note: 'Cắt lát mỏng' },
-  { recipeId: 4, ingredientId: 5, quantity: 2, unit: 'chén', note: null },
-  { recipeId: 4, ingredientId: 20, quantity: 2, unit: 'thìa canh', note: null },
-  { recipeId: 4, ingredientId: 12, quantity: 1, unit: 'thìa canh', note: null },
-  { recipeId: 4, ingredientId: 9, quantity: 2, unit: 'tép', note: 'Băm nhuyễn' },
+  // Cơm gà teriyaki (recipe 4) — cần Thịt gà, Gạo tẻ, Hành tây
+  { recipeId: 4, ingredientId: 1, quantity: 300, unit: 'g', note: 'Cắt lát mỏng' }, // Thịt gà (id:1)
+  { recipeId: 4, ingredientId: 6, quantity: 2, unit: 'chén', note: null },      // Gạo tẻ (id:6)
+  { recipeId: 4, ingredientId: 9, quantity: 1, unit: 'củ', note: 'Thái múi cau' }, // Hành tây (id:9)
 
-  // Canh rau củ chay (recipe 5)
-  { recipeId: 5, ingredientId: 7, quantity: 2, unit: 'quả', note: null },
-  { recipeId: 5, ingredientId: 8, quantity: 1, unit: 'củ', note: 'Cắt múi cau' },
-  { recipeId: 5, ingredientId: 13, quantity: 1, unit: 'thìa cà phê', note: null },
+  // Canh rau củ chay (recipe 5) — cần Súp lơ trắng, Cà rốt, Khoai tây
+  { recipeId: 5, ingredientId: 48, quantity: 200, unit: 'g', note: null },      // Súp lơ trắng (id:48)
+  { recipeId: 5, ingredientId: 16, quantity: 1, unit: 'củ', note: 'Cắt khúc' },// Cà rốt (id:16)
+  { recipeId: 5, ingredientId: 8, quantity: 1, unit: 'củ', note: 'Cắt múi cau' }, // Khoai tây (id:8)
 
-  // Cánh gà chiên nước mắm (recipe 7)
-  { recipeId: 7, ingredientId: 11, quantity: 3, unit: 'thìa canh', note: null },
-  { recipeId: 7, ingredientId: 12, quantity: 2, unit: 'thìa canh', note: null },
-  { recipeId: 7, ingredientId: 9, quantity: 3, unit: 'tép', note: 'Băm nhuyễn' },
+  // Cánh gà chiên nước mắm (recipe 7) — cần Thịt gà, Hành tây
+  { recipeId: 7, ingredientId: 1, quantity: 500, unit: 'g', note: 'Cánh gà' }, // Thịt gà (id:1)
+  { recipeId: 7, ingredientId: 9, quantity: 3, unit: 'tép', note: 'Băm nhuyễn' }, // Hành tây (id:9)
 
-  // Sốt me chua ngọt (recipe 10)
-  { recipeId: 10, ingredientId: 11, quantity: 2, unit: 'thìa canh', note: null },
-  { recipeId: 10, ingredientId: 12, quantity: 3, unit: 'thìa canh', note: null },
-  { recipeId: 10, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
+  // Sốt me chua ngọt (recipe 10) — cần Cà chua, Hành tây
+  { recipeId: 10, ingredientId: 10, quantity: 2, unit: 'quả', note: null },     // Cà chua (id:10)
+  { recipeId: 10, ingredientId: 9, quantity: 1, unit: 'củ', note: 'Thái nhỏ' }, // Hành tây (id:9)
 ];
 
 // ─── Destroy function ───────────────────────────────────
