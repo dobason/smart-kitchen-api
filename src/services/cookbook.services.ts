@@ -6,13 +6,13 @@ export type CreateCookbookInput = {
     userId: string;
 };
 
-export type UpdateCookbookInput = Partial<CreateCookbookInput>;
+export type UpdateCookbookInput = Partial<Pick<CreateCookbookInput, "name">>;
 export type CookbookFilter = {
-    userId?: string;
+    userId: string;
 };
 
 // Hàm lấy tất cả cookbook, có thể lọc theo userId
-export const getAllCookbooks = async (filters: CookbookFilter = {}) => {
+export const getAllCookbooks = async (filters: CookbookFilter) => {
     return await prisma.cookbook.findMany({
         where: {
             userId: filters.userId,
@@ -25,9 +25,9 @@ export const getAllCookbooks = async (filters: CookbookFilter = {}) => {
 };
 
 // Hàm lấy chi tiết cookbook theo ID
-export const getCookbookById = async (id: number) => {
-    return await prisma.cookbook.findUnique({
-        where: { id },
+export const getCookbookById = async (id: number, userId: string) => {
+    return await prisma.cookbook.findFirst({
+        where: { id, userId },
     });
 };
 
@@ -39,8 +39,12 @@ export const createCookbook = async (data: CreateCookbookInput) => {
 };
 
 // Hàm cập nhật cookbook
-export const updateCookbook = async (id: number, data: UpdateCookbookInput) => {
+export const updateCookbook = async (id: number, userId: string, data: UpdateCookbookInput) => {
     try {
+        await prisma.cookbook.findFirstOrThrow({
+            where: { id, userId },
+        });
+
         return await prisma.cookbook.update({
             where: { id },
             data,
@@ -51,8 +55,12 @@ export const updateCookbook = async (id: number, data: UpdateCookbookInput) => {
 };
 
 // Hàm xóa cookbook
-export const deleteCookbook = async (id: number) => {
+export const deleteCookbook = async (id: number, userId: string) => {
     try {
+        await prisma.cookbook.findFirstOrThrow({
+            where: { id, userId },
+        });
+
         return await prisma.cookbook.delete({
             where: { id },
         });

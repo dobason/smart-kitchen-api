@@ -30,9 +30,10 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
         return { userId: userId as string };
     })
     // Lấy tất cả cookbook recipes (GET)
-    .get("/", async ({ query, set, request }) => {
+    .get("/", async ({ query, userId, set, request }) => {
         try {
             const cookbookRecipes = await getAllCookbookRecipes({
+                userId,
                 recipeId: query.recipeId,
                 cookbookId: query.cookbookId,
             });
@@ -50,9 +51,9 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // Lấy chi tiết cookbook recipe (GET)
-    .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, set, request }) => {
+    .get("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, userId, set, request }) => {
         try {
-            const cookbookRecipe = await getCookbookRecipeById(recipeId, cookbookId);
+            const cookbookRecipe = await getCookbookRecipeById(recipeId, cookbookId, userId);
             if (!cookbookRecipe) {
                 set.status = HttpStatus.NOT_FOUND;
                 return { success: false, message: translate("errors.cookbook_recipe.not_found", locale(request)) };
@@ -71,13 +72,17 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // Tạo mới cookbook recipe (POST)
-    .post("/", async ({ body, set, request }) => {
+    .post("/", async ({ body, userId, set, request }) => {
         try {
             const data = body as { recipeId: number; cookbookId: number };
-            const newCookbookRecipe = await createCookbookRecipe(data);
+            const newCookbookRecipe = await createCookbookRecipe(data, userId);
             set.status = 201;
             return { success: true, message: translate("success.created", locale(request)), data: newCookbookRecipe };
-        } catch (error) {
+        } catch (error: any) {
+            if (error?.code === "P2025") {
+                set.status = 404;
+                return { success: false, message: translate("errors.cookbook_recipe.not_found", locale(request)) };
+            }
             set.status = 500;
             return { success: false, message: translate("errors.cookbook_recipe.create_failed", locale(request)) };
         }
@@ -90,7 +95,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // Cập nhật cookbook recipe (PUT)
-    .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, set, request }) => {
+    .put("/:recipeId/:cookbookId", async ({ params: { recipeId, cookbookId }, body, userId, set, request }) => {
         try {
             const data = body as { recipeId?: number; cookbookId?: number };
             const hasDataToUpdate = Object.values(data).some((value) => value !== undefined);
@@ -100,7 +105,7 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
                 return { success: false, message: translate("errors.no_fields_to_update", locale(request)) };
             }
 
-            const updatedCookbookRecipe = await updateCookbookRecipe(recipeId, cookbookId, data);
+            const updatedCookbookRecipe = await updateCookbookRecipe(recipeId, cookbookId, userId, data);
             return { success: true, message: translate("success.updated", locale(request)), data: updatedCookbookRecipe };
         } catch (error: any) {
             if (error?.code === "P2025") {
@@ -123,9 +128,9 @@ export const cookbookRecipeRoutes = new Elysia({ prefix: "v1/cookbook-recipes" }
     })
 
     // Xóa cookbook recipe (DELETE)
-    .delete("/:cookbookId/:recipeId", async ({ params: { cookbookId, recipeId }, set, request }) => {
+    .delete("/:cookbookId/:recipeId", async ({ params: { cookbookId, recipeId }, userId, set, request }) => {
         try {
-            await deleteCookbookRecipe(recipeId, cookbookId);
+            await deleteCookbookRecipe(recipeId, cookbookId, userId);
             return { success: true, message: "Deleted" };
         } catch (error: any) {
             if (error?.code === 'P2025') {

@@ -18,7 +18,6 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
     .get("/", async ({ query, set, request }) => {
         try {
             const recipes = await getAllRecipes({
-                userId: query.userId,
                 sourceType: query.sourceType,
             });
             return { success: true, data: recipes };
@@ -28,7 +27,6 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         }
     }, {
         query: t.Object({
-            userId: t.Optional(t.String()),
             sourceType: sourceTypeSchema,
         }),
         detail: { tags: ["Public"], summary: "Get all recipes" }

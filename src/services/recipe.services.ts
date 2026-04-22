@@ -53,17 +53,15 @@ export type CreateRecipeInput = {
     numberOfServes?: number;
 };
 
-export type UpdateRecipeInput = Partial<CreateRecipeInput>;
+export type UpdateRecipeInput = Partial<Omit<CreateRecipeInput, "userId">>;
 export type RecipeFilter = {
-    userId?: string;
     sourceType?: SourceTypeValue;
 };
 
-// Hàm lấy tất cả recipe, có thể lọc theo userId và sourceType
+// Hàm lấy tất cả recipe, có thể lọc theo sourceType
 export const getAllRecipes = async (filters: RecipeFilter = {}) => {
     const recipes = await prisma.recipe.findMany({
         where: {
-            userId: filters.userId,
             sourceType: filters.sourceType,
         },
         include: {
