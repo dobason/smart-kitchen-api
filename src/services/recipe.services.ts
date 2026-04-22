@@ -7,36 +7,44 @@ export type SourceTypeValue = "MANUAL" | "IMPORTED" | "AI_GENERATED";
  * Hàm chuyển đổi từ model database sang format frontend mong đợi.
  */
 const mapRecipeToResponse = (recipe: any) => {
-    const { recipeTags = [], recipeIngredients = [], ...rest } = recipe;
+    try {
+        const { recipeTags = [], recipeIngredients = [], ...rest } = recipe;
 
-    // Phân loại tags và cookware từ recipeTags
-    const tags = recipeTags
-        .filter((rt: any) => rt.tag.category !== 'Cookware')
-        .map((rt: any) => rt.tag.name);
+        // Phân loại tags và cookware từ recipeTags
+        const tags = recipeTags
+            .filter((rt: any) => rt.tag && rt.tag.category !== 'Cookware')
+            .map((rt: any) => rt.tag.name);
 
-    const cookware = recipeTags
-        .filter((rt: any) => rt.tag.category === 'Cookware')
-        .map((rt: any) => rt.tag.name);
+        const cookware = recipeTags
+            .filter((rt: any) => rt.tag && rt.tag.category === 'Cookware')
+            .map((rt: any) => rt.tag.name);
 
-    // Chuẩn hóa recipeIngredients: id thành string, icon → emoji
-    const normalizedIngredients = recipeIngredients.map((rI: any) => ({
-        ...rI,
-        ingredient: {
-            ...rI.ingredient,
-            id: String(rI.ingredient.id),
-            emoji: rI.ingredient.icon,
-        },
-    }));
+        // Chuẩn hóa recipeIngredients: id thành string, icon → emoji
+        const normalizedIngredients = recipeIngredients.map((rI: any) => {
+            if (!rI.ingredient) return rI;
+            return {
+                ...rI,
+                ingredient: {
+                    ...rI.ingredient,
+                    id: String(rI.ingredient.id),
+                    emoji: rI.ingredient.icon,
+                },
+            };
+        });
 
-    return {
-        ...rest,
-        id: String(recipe.id),
-        imageUrl: recipe.imageRecipe,
-        timeMinutes: recipe.totalTime,
-        tags,
-        cookware,
-        recipeIngredients: normalizedIngredients,
-    };
+        return {
+            ...rest,
+            id: String(recipe.id),
+            imageUrl: recipe.imageRecipe,
+            timeMinutes: recipe.totalTime,
+            tags,
+            cookware,
+            recipeIngredients: normalizedIngredients,
+        };
+    } catch (err) {
+        console.error("Error mapping recipe:", recipe.id, err);
+        throw err;
+    }
 };
 
 export type CreateRecipeInput = {
@@ -56,25 +64,46 @@ export type CreateRecipeInput = {
 export type UpdateRecipeInput = Partial<Omit<CreateRecipeInput, "userId">>;
 export type RecipeFilter = {
     sourceType?: SourceTypeValue;
+    userId?: string;
+    keyword?: string;
 };
 
-// Hàm lấy tất cả recipe, có thể lọc theo sourceType
+// Hàm lấy tất cả recipe, có thể lọc theo sourceType, userId và keyword
 export const getAllRecipes = async (filters: RecipeFilter = {}) => {
-    const recipes = await prisma.recipe.findMany({
-        where: {
-            sourceType: filters.sourceType,
-        },
-        include: {
-            recipeTags: {
-                include: {
-                    tag: true
+    try {
+        const { sourceType, userId, keyword } = filters;
+        
+        const recipes = await prisma.recipe.findMany({
+            where: {
+                ...(sourceType && { sourceType }),
+                ...(userId && { userId }),
+                ...(keyword && {
+                    OR: [
+                        { name: { contains: keyword, mode: 'insensitive' } },
+                        { description: { contains: keyword, mode: 'insensitive' } },
+                    ]
+                }),
+            },
+            include: {
+                recipeTags: {
+                    include: {
+                        tag: true
+                    }
+                },
+                recipeIngredients: {
+                    include: {
+                        ingredient: true
+                    }
                 }
-            }
-        },
-        orderBy: { createdAt: "desc" },
-    });
+            },
+            orderBy: { createdAt: "desc" },
+        });
 
-    return recipes.map(mapRecipeToResponse);
+        return recipes.map(mapRecipeToResponse);
+    } catch (error) {
+        console.error("Error in getAllRecipes:", error);
+        throw error;
+    }
 };
 
 // Hàm lấy chi tiết recipe theo ID

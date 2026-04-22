@@ -19,15 +19,19 @@ export const publicRecipeRoutes = new Elysia({ prefix: "v1/recipes" })
         try {
             const recipes = await getAllRecipes({
                 sourceType: query.sourceType,
+                userId: query.userId,
+                keyword: query.search,
             });
             return { success: true, data: recipes };
-        } catch (error) {
+        } catch (error: any) {
             set.status = 500;
-            return { success: false, message: translate("errors.recipe.fetch", locale(request)) };
+            return { success: false, message: error.message || translate("errors.recipe.fetch", locale(request)) };
         }
     }, {
         query: t.Object({
             sourceType: sourceTypeSchema,
+            userId: t.Optional(t.String()),
+            search: t.Optional(t.String()),
         }),
         detail: { tags: ["Public"], summary: "Get all recipes" }
     })

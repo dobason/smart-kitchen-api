@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const connectionString = process.env.DATABASE_URL!;
@@ -15,16 +15,16 @@ const sampleUsers = [
 
 // ─── Cookbooks ──────────────────────────────────────────
 const sampleCookbooks = [
-  { id: 1, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bữa sáng 15 phút' },
-  { id: 2, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Eat Clean căn bản' },
-  { id: 3, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sổ tay làm bánh & Eggdrop Sandwich' },
-  { id: 4, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Thực đơn tăng cơ giảm mỡ cho dân tập tạ' },
-  { id: 5, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Món chay thanh đạm' },
-  { id: 6, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Món nhậu cuối tuần' },
-  { id: 7, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cơm nhà mẹ nấu' },
-  { id: 8, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Đồ uống giải nhiệt mùa hè' },
-  { id: 9, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bí kíp nấu ăn bằng nồi chiên không dầu' },
-  { id: 10, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Công thức nước xốt đa năng' },
+  { id: 1, name: 'Bữa sáng 15 phút' },
+  { id: 2, name: 'Eat Clean căn bản' },
+  { id: 3, name: 'Sổ tay làm bánh & Eggdrop Sandwich' },
+  { id: 4, name: 'Thực đơn tăng cơ giảm mỡ cho dân tập tạ' },
+  { id: 5, name: 'Món chay thanh đạm' },
+  { id: 6, name: 'Món nhậu cuối tuần' },
+  { id: 7, name: 'Cơm nhà mẹ nấu' },
+  { id: 8, name: 'Đồ uống giải nhiệt mùa hè' },
+  { id: 9, name: 'Bí kíp nấu ăn bằng nồi chiên không dầu' },
+  { id: 10, name: 'Công thức nước xốt đa năng' },
 ];
 
 // ─── Tags ───────────────────────────────────────────────
@@ -199,249 +199,249 @@ const sampleIngredients = [
 
 // ─── Recipes ────────────────────────────────────────────
 const sampleRecipes: Array<{
-  id: number; userId: string; name: string; description: string | null;
+  id: number; name: string; description: string | null;
   imageRecipe: string | null; totalTime: number | null; calories: number | null;
   protein: number | null; carbs: number | null; fats: number | null;
   sourceType: 'MANUAL' | 'IMPORTED' | 'AI_GENERATED' | null; numberOfServes: number | null;
 }> = [
   {
-    id: 1, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bánh mì trứng ốp la',
+    id: 1, name: 'Bánh mì trứng ốp la',
     description: 'Món ăn sáng cực nhanh với bánh mì giòn và trứng ốp la vàng ươm.',
     imageRecipe: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800&q=80', totalTime: 10, calories: 350, protein: 15, carbs: 40, fats: 14,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 2, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Overnight Oats',
+    id: 2, name: 'Overnight Oats',
     description: 'Yến mạch ngâm qua đêm với sữa tươi, chuối và hạt chia thơm ngon.',
     imageRecipe: 'https://images.unsplash.com/photo-1517673132405-a56a62b18acc?w=800&q=80', totalTime: 5, calories: 300, protein: 10, carbs: 45, fats: 8,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 3, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Salad ức gà',
+    id: 3, name: 'Salad ức gà',
     description: 'Món salad tốt cho sức khỏe với ức gà luộc, xà lách và sốt dầu giấm.',
     imageRecipe: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80', totalTime: 20, calories: 350, protein: 30, carbs: 10, fats: 12,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 4, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cơm gà teriyaki',
+    id: 4, name: 'Cơm gà teriyaki',
     description: 'Gà áp chảo với xốt teriyaki Nhật Bản đậm đà ăn kèm cơm trắng.',
     imageRecipe: 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8ec?w=800&q=80', totalTime: 25, calories: 520, protein: 35, carbs: 65, fats: 15,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 5, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Canh rau củ chay',
+    id: 5, name: 'Canh rau củ chay',
     description: 'Canh thanh đạm với súp lơ, cà rốt và khoai tây.',
     imageRecipe: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80', totalTime: 30, calories: 150, protein: 5, carbs: 25, fats: 2,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 6, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Gỏi cuốn tôm thịt',
-    description: 'Món gỏi cuốn tươi mát với tôm, thịt ba chỉ và rau sống.',
+    id: 6, name: 'Gỏi cuốn tôm thịt',
+    description: 'Món gỏi cuốn tươi mát với tôm, thịt ba chỉ and rau sống.',
     imageRecipe: 'https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?w=800&q=80', totalTime: 20, calories: 200, protein: 12, carbs: 30, fats: 4,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 7, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cánh gà chiên nước mắm',
+    id: 7, name: 'Cánh gà chiên nước mắm',
     description: 'Cánh gà chiên giòn quyện sốt nước mắm tỏi ớt đậm đà.',
     imageRecipe: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=800&q=80', totalTime: 30, calories: 450, protein: 25, carbs: 5, fats: 35,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 8, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Trà đào sả vải',
+    id: 8, name: 'Trà đào sả vải',
     description: 'Thức uống giải nhiệt với trà, đào miếng và hương sả thơm mát.',
     imageRecipe: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80', totalTime: 10, calories: 120, protein: 0, carbs: 30, fats: 0,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 9, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Khoai lang nướng nồi chiên không dầu',
+    id: 9, name: 'Khoai lang nướng nồi chiên không dầu',
     description: 'Khoai lang nướng mật ngọt lịm, giữ trọn dinh dưỡng.',
     imageRecipe: 'https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?w=800&q=80', totalTime: 30, calories: 200, protein: 2, carbs: 45, fats: 0,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 10, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sốt me đa năng',
+    id: 10, name: 'Sốt me đa năng',
     description: 'Sốt me chua ngọt dùng để xào tôm, sườn hoặc chấm đồ nướng.',
     imageRecipe: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=800&q=80', totalTime: 15, calories: 100, protein: 1, carbs: 20, fats: 2,
     sourceType: 'MANUAL', numberOfServes: 4,
   },
   {
-    id: 11, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Mì Ý sốt bò băm cà chua',
+    id: 11, name: 'Mì Ý sốt bò băm cà chua',
     description: 'Sự kết hợp giữa mì Ý, thịt bò băm và xốt cà chua tươi cùng hành tây.',
-    imageRecipe: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&q=80', totalTime: 25, calories: 450, protein: 25, carbs: 60, fats: 12,
+    imageRecipe: 'https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=800&q=80', totalTime: 25, calories: 450, protein: 25, carbs: 60, fats: 12,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 12, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bò xào bông cải xanh',
+    id: 12, name: 'Bò xào bông cải xanh',
     description: 'Thịt bò nội xào cùng súp lơ trắng và cà rốt, hành tây.',
     imageRecipe: 'https://images.unsplash.com/photo-1512058560566-42724afbc2aa?w=800&q=80', totalTime: 15, calories: 320, protein: 28, carbs: 15, fats: 18,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 13, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Canh kim chi đậu phụ',
+    id: 13, name: 'Canh kim chi đậu phụ',
     description: 'Vị chua cay của kim chi nấu cùng đậu phụ, thịt ba chỉ và hành tây.',
     imageRecipe: 'https://images.unsplash.com/photo-1583064313642-a7c1df76efe5?w=800&q=80', totalTime: 30, calories: 280, protein: 18, carbs: 20, fats: 15,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 14, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Mì Udon hải sản',
+    id: 14, name: 'Mì Udon hải sản',
     description: 'Mì Udon dai giòn nấu cùng tôm, mực và vẹm trong nước dùng tảo bẹ.',
-    imageRecipe: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&q=80', totalTime: 20, calories: 410, protein: 22, carbs: 65, fats: 8,
+    imageRecipe: 'https://images.unsplash.com/photo-1557006021-b85faa2ba5f2?w=800&q=80', totalTime: 20, calories: 410, protein: 22, carbs: 65, fats: 8,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 15, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cá hồi áp chảo sốt bơ chanh',
+    id: 15, name: 'Cá hồi áp chảo sốt bơ chanh',
     description: 'Cá hồi tươi áp chảo ăn kèm măng tây và sốt chanh vàng béo ngậy.',
     imageRecipe: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80', totalTime: 15, calories: 450, protein: 35, carbs: 5, fats: 32,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 16, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Salad bơ và hạt chia',
+    id: 16, name: 'Salad bơ và hạt chia',
     description: 'Món salad xanh mát từ bơ, xà lách, dưa leo rắc hạt chia bổ dưỡng.',
     imageRecipe: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80', totalTime: 10, calories: 220, protein: 5, carbs: 12, fats: 18,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 17, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Súp bí đỏ kem tươi',
+    id: 17, name: 'Súp bí đỏ kem tươi',
     description: 'Bí đỏ nghiền mịn nấu cùng sữa tươi và hành tây.',
     imageRecipe: 'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=800&q=80', totalTime: 30, calories: 180, protein: 4, carbs: 25, fats: 8,
     sourceType: 'MANUAL', numberOfServes: 3,
   },
   {
-    id: 18, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Lẩu nấm tổng hợp',
+    id: 18, name: 'Lẩu nấm tổng hợp',
     description: 'Nước dùng thanh đạm nấu từ củ cải, nấm kim châm, nấm đùi gà và nấm tùng nhung.',
-    imageRecipe: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80', totalTime: 40, calories: 150, protein: 10, carbs: 20, fats: 2,
+    imageRecipe: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80', totalTime: 40, calories: 150, protein: 10, carbs: 20, fats: 2,
     sourceType: 'MANUAL', numberOfServes: 4,
   },
   {
-    id: 19, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bào ngư hầm táo tàu',
+    id: 19, name: 'Bào ngư hầm táo tàu',
     description: 'Món ăn bổ dưỡng với bào ngư tươi, táo tàu và kỷ tử hầm kỹ.',
-    imageRecipe: 'https://images.unsplash.com/photo-1626202340502-999333967401?w=800&q=80', totalTime: 60, calories: 320, protein: 40, carbs: 30, fats: 5,
+    imageRecipe: null, totalTime: 60, calories: 320, protein: 40, carbs: 30, fats: 5,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 20, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cơm rang dưa bò',
+    id: 20, name: 'Cơm rang dưa bò',
     description: 'Gạo tẻ rang săn cùng thịt bò nội và dưa cải muối chua.',
     imageRecipe: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&q=80', totalTime: 25, calories: 550, protein: 22, carbs: 70, fats: 20,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 21, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Mực xào cần tỏi',
+    id: 21, name: 'Mực xào cần tỏi',
     description: 'Mực tươi xào cùng rau cần nước, hành tây và ớt chuông.',
-    imageRecipe: 'https://images.unsplash.com/photo-1533630666244-93437452d3a9?w=800&q=80', totalTime: 15, calories: 210, protein: 25, carbs: 10, fats: 8,
+    imageRecipe: null, totalTime: 15, calories: 210, protein: 25, carbs: 10, fats: 8,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 22, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bún nưa trộn chay',
+    id: 22, name: 'Bún nưa trộn chay',
     description: 'Bún nưa ít calo trộn cùng đậu phụ rán, dưa leo và giá đỗ.',
-    imageRecipe: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80', totalTime: 15, calories: 120, protein: 8, carbs: 15, fats: 5,
+    imageRecipe: null, totalTime: 15, calories: 120, protein: 8, carbs: 15, fats: 5,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 23, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Ngao hấp sả ớt',
+    id: 23, name: 'Ngao hấp sả ớt',
     description: 'Ngao hai cồi hấp cùng sả tươi, chanh vàng và chút rượu trắng.',
-    imageRecipe: 'https://images.unsplash.com/photo-1534422298391-e4f8c170db06?w=800&q=80', totalTime: 15, calories: 140, protein: 15, carbs: 5, fats: 3,
+    imageRecipe: null, totalTime: 15, calories: 140, protein: 15, carbs: 5, fats: 3,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 24, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sườn cừu nướng thảo mộc',
+    id: 24, name: 'Sườn cừu nướng thảo mộc',
     description: 'Sườn cừu nướng cùng húng quế, khoai tây và tỏi.',
     imageRecipe: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80', totalTime: 45, calories: 600, protein: 45, carbs: 20, fats: 40,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 25, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sữa chua việt quất hạt điều',
+    id: 25, name: 'Sữa chua việt quất hạt điều',
     description: 'Bữa phụ nhẹ nhàng với sữa chua, quả việt quất và hạt điều giòn rụm.',
     imageRecipe: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80', totalTime: 5, calories: 250, protein: 8, carbs: 30, fats: 12,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 26, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Tôm rim tỏi ớt',
+    id: 26, name: 'Tôm rim tỏi ớt',
     description: 'Tôm tươi rim cùng nước mắm, đường, tỏi và ớt chuông.',
-    imageRecipe: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=800&q=80', totalTime: 20, calories: 240, protein: 28, carbs: 8, fats: 10,
+    imageRecipe: null, totalTime: 20, calories: 240, protein: 28, carbs: 8, fats: 10,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 27, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Canh rong biển sườn bò',
+    id: 27, name: 'Canh rong biển sườn bò',
     description: 'Rong biển nấu cùng sườn bò và tỏi theo phong cách Hàn Quốc.',
-    imageRecipe: 'https://images.unsplash.com/photo-1547928576-a4a33237ce35?w=800&q=80', totalTime: 50, calories: 350, protein: 30, carbs: 10, fats: 22,
+    imageRecipe: null, totalTime: 50, calories: 350, protein: 30, carbs: 10, fats: 22,
     sourceType: 'MANUAL', numberOfServes: 3,
   },
   {
-    id: 28, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Khoai mỡ bọc tôm chiên',
+    id: 28, name: 'Khoai mỡ bọc tôm chiên',
     description: 'Khoai mỡ hấp nghiền mịn bọc tôm tươi rồi chiên giòn.',
-    imageRecipe: 'https://images.unsplash.com/photo-1541529086526-db283c563270?w=800&q=80', totalTime: 35, calories: 380, protein: 15, carbs: 45, fats: 18,
+    imageRecipe: null, totalTime: 35, calories: 380, protein: 15, carbs: 45, fats: 18,
     sourceType: 'MANUAL', numberOfServes: 3,
   },
   {
-    id: 29, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Mì ăn liền xào hải sản',
+    id: 29, name: 'Mì ăn liền xào hải sản',
     description: 'Mì ăn liền xào cùng mực, tôm và cải bó xôi.',
-    imageRecipe: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&q=80', totalTime: 15, calories: 480, protein: 20, carbs: 55, fats: 20,
+    imageRecipe: null, totalTime: 15, calories: 480, protein: 20, carbs: 55, fats: 20,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 30, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sinh tố chuối dâu tây',
+    id: 30, name: 'Sinh tố chuối dâu tây',
     description: 'Thức uống từ chuối, dâu tây và sữa tươi thanh mát.',
     imageRecipe: 'https://images.unsplash.com/photo-1550507992-eb63ffee0847?w=800&q=80', totalTime: 5, calories: 190, protein: 5, carbs: 40, fats: 2,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 31, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Đậu phụ sốt nấm',
+    id: 31, name: 'Đậu phụ sốt nấm',
     description: 'Đậu phụ rán mềm sốt cùng nấm kim châm và nấm đùi gà.',
-    imageRecipe: 'https://images.unsplash.com/photo-1525855715739-0965ad2613cb?w=800&q=80', totalTime: 20, calories: 210, protein: 15, carbs: 12, fats: 12,
+    imageRecipe: null, totalTime: 20, calories: 210, protein: 15, carbs: 12, fats: 12,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 32, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Cá thu đao nướng muối',
+    id: 32, name: 'Cá thu đao nướng muối',
     description: 'Cá thu đao nướng giòn da, ăn kèm chanh vàng và củ cải bào.',
-    imageRecipe: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80', totalTime: 25, calories: 320, protein: 28, carbs: 0, fats: 24,
+    imageRecipe: null, totalTime: 25, calories: 320, protein: 28, carbs: 0, fats: 24,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 33, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bánh gạo Tokbokki',
+    id: 33, name: 'Bánh gạo Tokbokki',
     description: 'Bánh gạo nấu cùng chả cá xoắn Nhật, kim chi và sốt cay.',
-    imageRecipe: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=800&q=80', totalTime: 20, calories: 450, protein: 12, carbs: 85, fats: 6,
+    imageRecipe: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&q=80', totalTime: 20, calories: 450, protein: 12, carbs: 85, fats: 6,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 34, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Gà hầm hạt dẻ',
+    id: 34, name: 'Gà hầm hạt dẻ',
     description: 'Thịt gà ta hầm cùng hạt dẻ thơm bùi và cà rốt.',
-    imageRecipe: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80', totalTime: 50, calories: 480, protein: 35, carbs: 30, fats: 25,
+    imageRecipe: null, totalTime: 50, calories: 480, protein: 35, carbs: 30, fats: 25,
     sourceType: 'MANUAL', numberOfServes: 3,
   },
   {
-    id: 35, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Salad táo việt quất',
+    id: 35, name: 'Salad táo việt quất',
     description: 'Táo xắt nhỏ trộn cùng quả việt quất, hạnh nhân và sốt sữa chua.',
-    imageRecipe: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80', totalTime: 10, calories: 180, protein: 4, carbs: 35, fats: 5,
+    imageRecipe: null, totalTime: 10, calories: 180, protein: 4, carbs: 35, fats: 5,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 36, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Hàu nướng phô mai',
+    id: 36, name: 'Hàu nướng phô mai',
     description: 'Hàu tươi phủ phô mai và sữa tươi nướng thơm lừng.',
-    imageRecipe: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=800&q=80', totalTime: 20, calories: 350, protein: 18, carbs: 10, fats: 28,
+    imageRecipe: null, totalTime: 20, calories: 350, protein: 18, carbs: 10, fats: 28,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 37, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Miến xào cua',
+    id: 37, name: 'Miến xào cua',
     description: 'Miến dai xào cùng thịt cua tươi, mộc nhĩ và hành tây.',
-    imageRecipe: 'https://images.unsplash.com/photo-1540331547168-8b63109225b7?w=800&q=80', totalTime: 30, calories: 420, protein: 25, carbs: 55, fats: 14,
+    imageRecipe: null, totalTime: 30, calories: 420, protein: 25, carbs: 55, fats: 14,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 38, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Sò điệp áp chảo bơ tỏi',
+    id: 38, name: 'Sò điệp áp chảo bơ tỏi',
     description: 'Sò điệp áp chảo cùng bơ và tỏi, trang trí bằng ngò rí.',
-    imageRecipe: 'https://images.unsplash.com/photo-1626645272163-460fe3877b96?w=800&q=80', totalTime: 15, calories: 280, protein: 22, carbs: 8, fats: 18,
+    imageRecipe: null, totalTime: 15, calories: 280, protein: 22, carbs: 8, fats: 18,
     sourceType: 'MANUAL', numberOfServes: 1,
   },
   {
-    id: 39, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Bắp nướng mỡ hành ba chỉ',
+    id: 39, name: 'Bắp nướng mỡ hành ba chỉ',
     description: 'Bắp ngô nướng ăn kèm mỡ hành và vụn thịt ba chỉ chiên giòn.',
-    imageRecipe: 'https://images.unsplash.com/photo-1541304916205-f3c5b3699889?w=800&q=80', totalTime: 20, calories: 310, protein: 8, carbs: 45, fats: 14,
+    imageRecipe: null, totalTime: 20, calories: 310, protein: 8, carbs: 45, fats: 14,
     sourceType: 'MANUAL', numberOfServes: 2,
   },
   {
-    id: 40, userId: "user_3BbkvYViAMYnHhHcNQ7eWXdLyG1", name: 'Canh cá khô củ cải',
+    id: 40, name: 'Canh cá khô củ cải',
     description: 'Món canh thanh nhiệt giải rượu từ cá khô, củ cải và hành lá.',
-    imageRecipe: 'https://images.unsplash.com/photo-1511910849309-0dffb8785146?w=800&q=80', totalTime: 25, calories: 160, protein: 18, carbs: 12, fats: 4,
+    imageRecipe: null, totalTime: 25, calories: 160, protein: 18, carbs: 12, fats: 4,
     sourceType: 'MANUAL', numberOfServes: 3,
   },
 ];
@@ -488,62 +488,68 @@ const sampleCookbookRecipes = [
 
 // ─── Recipe ↔ Tag (junction) ────────────────────────────
 const sampleRecipeTags = [
-  { recipeId: 1, tagId: 8 },   // Bánh mì trứng → Breakfast (id:8)
-  { recipeId: 1, tagId: 36 },  // Bánh mì trứng → 15 mins (id:36)
-  { recipeId: 2, tagId: 8 },   // Overnight Oats → Breakfast (id:8)
-  { recipeId: 2, tagId: 15 },  // Overnight Oats → Vegetarian (id:15)
-  { recipeId: 3, tagId: 9 },   // Salad ức gà → Lunch (id:9)
-  { recipeId: 3, tagId: 15 },  // Salad ức gà → Vegetarian-style (id:15)
-  { recipeId: 3, tagId: 20 },  // Salad ức gà → High Protein (id:20)
-  { recipeId: 4, tagId: 10 },  // Cơm gà teriyaki → Dinner (id:10)
-  { recipeId: 4, tagId: 27 },  // Cơm gà teriyaki → Japanese (id:27)
-  { recipeId: 4, tagId: 20 },  // Cơm gà teriyaki → High Protein (id:20)
-  { recipeId: 5, tagId: 14 },  // Canh rau củ → Vegan (id:14)
-  { recipeId: 5, tagId: 31 },  // Canh rau củ → Savory (id:31)
-  { recipeId: 6, tagId: 31 },  // Gỏi cuốn → Savory (id:31)
-  { recipeId: 6, tagId: 36 },  // Gỏi cuốn → 15 mins (id:36)
-  { recipeId: 7, tagId: 11 },  // Cánh gà → Snack (id:11)
-  { recipeId: 7, tagId: 29 },  // Cánh gà → Spicy (id:29)
-  { recipeId: 8, tagId: 13 },  // Trà đào → Drink (id:13)
-  { recipeId: 9, tagId: 4 },   // Khoai lang → Air Fryer (id:4)
-  { recipeId: 9, tagId: 17 },  // Khoai lang → Low Carb (id:17)
-  { recipeId: 10, tagId: 31 }, // Sốt me → Savory (id:31)
+  { recipeId: 1, tagId: 1 },   // Bánh mì trứng → Bữa sáng
+  { recipeId: 1, tagId: 15 },  // Bánh mì trứng → Nhanh & Dễ
+  { recipeId: 2, tagId: 1 },   // Overnight Oats → Bữa sáng
+  { recipeId: 2, tagId: 5 },   // Overnight Oats → Eat Clean
+  { recipeId: 3, tagId: 2 },   // Salad ức gà → Bữa trưa
+  { recipeId: 3, tagId: 5 },   // Salad ức gà → Eat Clean
+  { recipeId: 3, tagId: 8 },   // Salad ức gà → Tăng cơ
+  { recipeId: 4, tagId: 3 },   // Cơm gà teriyaki → Bữa tối
+  { recipeId: 4, tagId: 11 },  // Cơm gà teriyaki → Món Nhật
+  { recipeId: 4, tagId: 8 },   // Cơm gà teriyaki → Tăng cơ
+  { recipeId: 5, tagId: 7 },   // Canh rau củ → Chay
+  { recipeId: 5, tagId: 9 },   // Canh rau củ → Món Việt
+  { recipeId: 6, tagId: 9 },   // Gỏi cuốn → Món Việt
+  { recipeId: 6, tagId: 15 },  // Gỏi cuốn → Nhanh & Dễ
+  { recipeId: 7, tagId: 9 },   // Cánh gà → Món Việt
+  { recipeId: 7, tagId: 4 },   // Cánh gà → Ăn vặt
+  { recipeId: 8, tagId: 12 },  // Trà đào → Đồ uống
+  { recipeId: 9, tagId: 14 },  // Khoai lang → Nồi chiên không dầu
+  { recipeId: 9, tagId: 6 },   // Khoai lang → Low Carb
+  { recipeId: 10, tagId: 13 }, // Sốt me → Nước xốt
 ];
 
 // ─── Recipe ↔ Ingredient (junction) ─────────────────────
 const sampleRecipeIngredients = [
-  // Bánh mì trứng ốp la (recipe 1) — cần Trứng, Bánh mì, Phô mai
-  { recipeId: 1, ingredientId: 2, quantity: 2, unit: 'quả', note: null },       // Trứng (id:2)
-  { recipeId: 1, ingredientId: 4, quantity: 2, unit: 'lát', note: null },       // Bánh mì (id:4)
-  { recipeId: 1, ingredientId: 5, quantity: 1, unit: 'lát', note: null },       // Phô mai (id:5)
+  // Bánh mì trứng (recipe 1)
+  { recipeId: 1, ingredientId: 1, quantity: 2, unit: 'quả', note: null },
+  { recipeId: 1, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
+  { recipeId: 1, ingredientId: 14, quantity: 0.25, unit: 'thìa cà phê', note: null },
 
-  // Overnight Oats (recipe 2) — cần Sữa tươi, Chuối, Hạt chia
-  { recipeId: 2, ingredientId: 3, quantity: 100, unit: 'ml', note: 'Có thể thay bằng sữa hạnh nhân' }, // Sữa tươi (id:3)
-  { recipeId: 2, ingredientId: 18, quantity: 1, unit: 'quả', note: 'Cắt lát' }, // Chuối (id:18)
-  { recipeId: 2, ingredientId: 44, quantity: 1, unit: 'thìa canh', note: null },// Hạt chia (id:44)
+  // Overnight Oats (recipe 2)
+  { recipeId: 2, ingredientId: 16, quantity: 50, unit: 'g', note: null },
+  { recipeId: 2, ingredientId: 3, quantity: 100, unit: 'ml', note: 'Có thể thay bằng sữa hạnh nhân' },
+  { recipeId: 2, ingredientId: 17, quantity: 1, unit: 'quả', note: 'Cắt lát' },
 
-  // Salad ức gà (recipe 3) — cần Thịt gà, Xà lách, Cà chua
-  { recipeId: 3, ingredientId: 1, quantity: 200, unit: 'g', note: null },       // Thịt gà (id:1)
-  { recipeId: 3, ingredientId: 11, quantity: 100, unit: 'g', note: null },      // Xà lách (id:11)
-  { recipeId: 3, ingredientId: 10, quantity: 5, unit: 'quả', note: 'Cà chua bi' }, // Cà chua (id:10)
+  // Salad ức gà (recipe 3)
+  { recipeId: 3, ingredientId: 4, quantity: 200, unit: 'g', note: null },
+  { recipeId: 3, ingredientId: 6, quantity: 100, unit: 'g', note: null },
+  { recipeId: 3, ingredientId: 7, quantity: 5, unit: 'quả', note: 'Cà chua bi' },
+  { recipeId: 3, ingredientId: 10, quantity: 1, unit: 'thìa canh', note: 'Dùng cho sốt' },
+  { recipeId: 3, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
 
-  // Cơm gà teriyaki (recipe 4) — cần Thịt gà, Gạo tẻ, Hành tây
-  { recipeId: 4, ingredientId: 1, quantity: 300, unit: 'g', note: 'Cắt lát mỏng' }, // Thịt gà (id:1)
-  { recipeId: 4, ingredientId: 6, quantity: 2, unit: 'chén', note: null },      // Gạo tẻ (id:6)
-  { recipeId: 4, ingredientId: 9, quantity: 1, unit: 'củ', note: 'Thái múi cau' }, // Hành tây (id:9)
+  // Cơm gà teriyaki (recipe 4)
+  { recipeId: 4, ingredientId: 4, quantity: 300, unit: 'g', note: 'Cắt lát mỏng' },
+  { recipeId: 4, ingredientId: 5, quantity: 2, unit: 'chén', note: null },
+  { recipeId: 4, ingredientId: 20, quantity: 2, unit: 'thìa canh', note: null },
+  { recipeId: 4, ingredientId: 12, quantity: 1, unit: 'thìa canh', note: null },
+  { recipeId: 4, ingredientId: 9, quantity: 2, unit: 'tép', note: 'Băm nhuyễn' },
 
-  // Canh rau củ chay (recipe 5) — cần Súp lơ trắng, Cà rốt, Khoai tây
-  { recipeId: 5, ingredientId: 48, quantity: 200, unit: 'g', note: null },      // Súp lơ trắng (id:48)
-  { recipeId: 5, ingredientId: 16, quantity: 1, unit: 'củ', note: 'Cắt khúc' },// Cà rốt (id:16)
-  { recipeId: 5, ingredientId: 8, quantity: 1, unit: 'củ', note: 'Cắt múi cau' }, // Khoai tây (id:8)
+  // Canh rau củ chay (recipe 5)
+  { recipeId: 5, ingredientId: 7, quantity: 2, unit: 'quả', note: null },
+  { recipeId: 5, ingredientId: 8, quantity: 1, unit: 'củ', note: 'Cắt múi cau' },
+  { recipeId: 5, ingredientId: 13, quantity: 1, unit: 'thìa cà phê', note: null },
 
-  // Cánh gà chiên nước mắm (recipe 7) — cần Thịt gà, Hành tây
-  { recipeId: 7, ingredientId: 1, quantity: 500, unit: 'g', note: 'Cánh gà' }, // Thịt gà (id:1)
-  { recipeId: 7, ingredientId: 9, quantity: 3, unit: 'tép', note: 'Băm nhuyễn' }, // Hành tây (id:9)
+  // Cánh gà chiên nước mắm (recipe 7)
+  { recipeId: 7, ingredientId: 11, quantity: 3, unit: 'thìa canh', note: null },
+  { recipeId: 7, ingredientId: 12, quantity: 2, unit: 'thìa canh', note: null },
+  { recipeId: 7, ingredientId: 9, quantity: 3, unit: 'tép', note: 'Băm nhuyễn' },
 
-  // Sốt me chua ngọt (recipe 10) — cần Cà chua, Hành tây
-  { recipeId: 10, ingredientId: 10, quantity: 2, unit: 'quả', note: null },     // Cà chua (id:10)
-  { recipeId: 10, ingredientId: 9, quantity: 1, unit: 'củ', note: 'Thái nhỏ' }, // Hành tây (id:9)
+  // Sốt me chua ngọt (recipe 10)
+  { recipeId: 10, ingredientId: 11, quantity: 2, unit: 'thìa canh', note: null },
+  { recipeId: 10, ingredientId: 12, quantity: 3, unit: 'thìa canh', note: null },
+  { recipeId: 10, ingredientId: 13, quantity: 0.5, unit: 'thìa cà phê', note: null },
 ];
 
 // ─── Destroy function ───────────────────────────────────
@@ -568,12 +574,23 @@ const seed = async () => {
     });
   }
 
+  // Fetch all user IDs to distribute cookbooks and recipes
+  const allUsers = await prisma.user.findMany({ select: { userId: true } });
+  const userIds = allUsers.map(u => u.userId);
+
+  if (userIds.length === 0) {
+    throw new Error('No users found to assign cookbooks and recipes to.');
+  }
+
   console.log('📚 Seeding cookbooks...');
-  for (const cookbook of sampleCookbooks) {
+  for (let i = 0; i < sampleCookbooks.length; i++) {
+    const cookbook = sampleCookbooks[i];
+    const userId = userIds[i % userIds.length]; // Round-robin distribution
+    
     await prisma.cookbook.upsert({
       where: { id: cookbook.id },
-      update: cookbook,
-      create: cookbook,
+      update: { ...cookbook, userId },
+      create: { ...cookbook, userId },
     });
   }
   console.log('✅ Cookbooks');
@@ -597,12 +614,17 @@ const seed = async () => {
   }
 
   console.log('🍳 Seeding recipes...');
-  for (const { name, ...recipeData } of sampleRecipes) {
-    const formattedRecipe = { ...recipeData, recipesName: name };
+  const allUsersForRecipes = await prisma.user.findMany({ select: { userId: true } });
+  const recipeUserIds = allUsersForRecipes.map(u => u.userId);
+
+  for (let i = 0; i < sampleRecipes.length; i++) {
+    const recipe = sampleRecipes[i];
+    const userId = recipeUserIds[i % recipeUserIds.length]; // Round-robin distribution
+
     await prisma.recipe.upsert({
-      where: { id: formattedRecipe.id },
-      update: formattedRecipe,
-      create: formattedRecipe,
+      where: { id: recipe.id },
+      update: { ...recipe, userId },
+      create: { ...recipe, userId },
     });
   }
 
